@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="src/style.css" />
+    <title>stream-sensor-network-administration-map</title>
+  </head>
+  <body>
+  <div id="main">
+      <nav id="navbar">
+          <div id="nav-action-btns"></div>
+          <div class="nav-tabs"></div>
+          <div class="nav-right">
+              <span id="user-name"></span>
+              <button id="logout-btn" class="btn close-btn">Logout</button>
+          </div>
+      </nav>
+
+      <div id="app-body">
+          <div id="sidebar">
+              <div class="sidebar-section">
+                  <label for="search-input"></label>
+                  <input type="search" id="search-input" placeholder="Search...">
+              </div>
+
+              <div class="sidebar-section">
+                  <label class="sidebar-heading">Filters</label>
+                  <div id="filter-groups"></div>
+              </div>
+          </div>
+
+          <div id="map"></div>
+      </div>
+  </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
