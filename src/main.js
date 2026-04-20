@@ -1,12 +1,14 @@
 import { isAuthenticated } from "./js/auth/auth.js";
 import { showView } from "./js/auth/authController.js";
 import { initFilters } from "./js/filter.js";
+import { initSearch } from "./js/search.js";
 import { map } from "./js/map.js";
 import { MarkerCollection } from "./js/markerCollection.js";
 import { getObservatoryData } from "./js/api.js";
 
 async function initApp() {
     const observatories = await getObservatoryData();
+    console.log(observatories);
     const bridgeSensorMarkers = new MarkerCollection(map);
     for (const observatory of observatories) {
         bridgeSensorMarkers.add(observatory.latitude, observatory.longitude, observatory);
@@ -16,6 +18,7 @@ async function initApp() {
         console.log(marker.properties);
     });
     initFilters(bridgeSensorMarkers);
+    initSearch(bridgeSensorMarkers, map);
 }
 
 // Listen for login event

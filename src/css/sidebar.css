@@ -80,24 +80,3 @@
 .filter-option:hover {
     background: var(--light-gray);
 }
-
-input[type="search"] {
-    /* Reset default browser styling */
-    -webkit-appearance: none;
-    appearance: none;
-
-    padding: 6px 10px;
-    border: 1px solid var(--light-gray);
-    border-radius: 4px;
-    font-size: 14px;
-    outline: none;
-}
-
-input[type="search"]:focus {
-    border-color: var(--light-blue);
-}
-
-/* Remove the default clear (x) button */
-input[type="search"]::-webkit-search-cancel-button {
-    -webkit-appearance: none;
-}
