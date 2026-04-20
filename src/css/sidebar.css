@@ -1,0 +1,103 @@
+#sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+
+    flex: 0 0 200px;
+    margin-top: var(--line-height);
+    padding-right: 0.5em;
+    padding-left: 0.5em;
+}
+
+.sidebar-heading {
+    font-size: 1.1em;
+    border-bottom: 1px solid var(--light-gray);
+    margin-bottom: 1em;
+    margin-right: 1em;
+}
+
+.sidebar-section {
+    display: flex;
+    flex-direction: column;
+}
+
+#filter-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.filter-title {
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    gap: 0.5em;
+    user-select: none;
+}
+
+.filter-title:hover {
+    background: var(--light-gray);
+}
+
+.chevron {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: black;
+    stroke-width: 2;
+    transition: transform 0.2s;
+}
+
+.chevron {
+    transition: transform 0.2s ease;
+}
+
+.filter-group.open .chevron {
+    transform: rotate(90deg);
+}
+
+.filter-options {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.filter-group.open .filter-options {
+    display: flex;
+}
+
+.filter-option {
+    text-indent: 3ch;
+    user-select: none;
+}
+
+.filter-option:hover {
+    background: var(--light-gray);
+}
+
+input[type="search"] {
+    /* Reset default browser styling */
+    -webkit-appearance: none;
+    appearance: none;
+
+    padding: 6px 10px;
+    border: 1px solid var(--light-gray);
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+}
+
+input[type="search"]:focus {
+    border-color: var(--light-blue);
+}
+
+/* Remove the default clear (x) button */
+input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+}

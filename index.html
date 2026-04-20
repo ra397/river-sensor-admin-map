@@ -1,38 +1,59 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="src/style.css" />
-    <title>stream-sensor-network-administration-map</title>
-  </head>
-  <body>
-  <div id="main">
-      <nav id="navbar">
-          <div id="nav-action-btns"></div>
-          <div class="nav-tabs"></div>
-          <div class="nav-right">
-              <span id="user-name"></span>
-              <button id="logout-btn" class="btn close-btn">Logout</button>
-          </div>
-      </nav>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="src/style.css" />
+        <title>stream-sensor-network-administration-map</title>
+    </head>
+    <body>
+        <div id="login-view">
+            <form id="login-form">
+                <h2>Login</h2>
+                <input type="email" id="login-email" placeholder="Email" />
+                <input type="password" id="login-password" placeholder="Password" />
+                <button type="submit" class="btn submit-btn login-btn">Login</button>
+                <span id="forgot-password-link" class="link">Forgot password?</span>
+            </form>
+        </div>
 
-      <div id="app-body">
-          <div id="sidebar">
-              <div class="sidebar-section">
-                  <label for="search-input"></label>
-                  <input type="search" id="search-input" placeholder="Search...">
-              </div>
+        <div id="forgot-password-view">
+            <div id="forgot-password-form">
+                <h2>Reset Password</h2>
+                <input type="email" id="forgot-email" placeholder="Email" />
+                <button type="button" id="get-otp-btn" class="btn submit-btn login-btn">Get One-Time Code</button>
+                <span class="link back-to-login">Back to login</span>
+            </div>
+        </div>
 
-              <div class="sidebar-section">
-                  <label class="sidebar-heading">Filters</label>
-                  <div id="filter-groups"></div>
-              </div>
-          </div>
+        <div id="new-password-view">
+            <div id="new-password-form">
+                <h2>Reset Password</h2>
+                <input type="email" id="reset-email" placeholder="Email" />
+                <input type="text" id="reset-otp" placeholder="One-Time Code" />
+                <input type="password" id="reset-password" placeholder="New Password" />
+                <input type="password" id="reset-password-confirm" placeholder="Confirm New Password" />
+                <button type="button" id="reset-password-btn" class="btn submit-btn login-btn">Reset Password</button>
+                <span class="link back-to-login">Back to login</span>
+            </div>
+        </div>
 
-          <div id="map"></div>
-      </div>
-  </div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+        <div id="main-view">
+            <div id="app-body">
+                <div id="sidebar">
+                    <div class="sidebar-section">
+                        <label for="search-input"></label>
+                        <input type="search" id="search-input" placeholder="Search...">
+                    </div>
+
+                    <div class="sidebar-section">
+                        <label class="sidebar-heading">Filters</label></div>
+                        <div id="filter-groups"></div>
+                </div>
+
+                <div id="map"></div>
+            </div>
+        </div>
+        <script type="module" src="/src/main.js"></script>
+    </body>
 </html>

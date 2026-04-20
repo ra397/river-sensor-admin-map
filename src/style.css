@@ -1,3 +1,40 @@
+@import './css/auth.css';
+@import './css/sidebar.css';
+
+:root {
+    --black: #000;
+    --light-blue: rgb(13, 110, 253);
+    --light-gray: #ccc;
+    --dark-gray: #dddddd4a;
+    --red: #dc3545;
+    --line-height: 1.6rem;
+}
+
+body {
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    font-size: 14px;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    line-height: var(--line-height);
+}
+
+#main-view {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+#app-body {
+    flex: 1;
+    display: flex;
+    min-height: 0;
+    width: 100%;
+}
+
 #map {
-    height: 400px;
+    height: 100%;
+    width: 100%;
 }

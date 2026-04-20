@@ -8,7 +8,7 @@ const libs = import.meta.env.VITE_GOOGLE_MAPS_LIBS.split(',').map(l => l.trim())
 await Promise.all(libs.map(lib => importLibrary(lib)));
 
 export const map = new google.maps.Map(document.getElementById('map'), {
-    center: { lat: 41.6611, lng: -91.5302 },
-    zoom: 10,
+    center: { lat: 42.0656, lng: -93.38978 },
+    zoom: 8,
     mapId: import.meta.env.VITE_GOOGLE_MAPS_ID,
 });

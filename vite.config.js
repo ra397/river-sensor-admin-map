@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 
 export default defineConfig({
-    base: '/hydroiowa/',
+    base: '/hydroiowa/riversensor',
     server: {
         port: 3432,
         proxy: {
