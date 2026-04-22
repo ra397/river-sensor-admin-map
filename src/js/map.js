@@ -10,5 +10,7 @@ await Promise.all(libs.map(lib => importLibrary(lib)));
 export const map = new google.maps.Map(document.getElementById('map'), {
     center: { lat: 42.0656, lng: -93.38978 },
     zoom: 8,
+    minZoom: 5,
+    maxZoom: 18,
     mapId: import.meta.env.VITE_GOOGLE_MAPS_ID,
 });

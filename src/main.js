@@ -8,12 +8,11 @@ import { getObservatoryData } from "./js/api.js";
 
 async function initApp() {
     const observatories = await getObservatoryData();
-    console.log(observatories);
     const bridgeSensorMarkers = new MarkerCollection(map);
     for (const observatory of observatories) {
         bridgeSensorMarkers.add(observatory.latitude, observatory.longitude, observatory);
     }
-    bridgeSensorMarkers.setSize(3.5);
+    bridgeSensorMarkers.setSize(5.0);
     bridgeSensorMarkers.onClick((marker) => {
         console.log(marker.properties);
     });

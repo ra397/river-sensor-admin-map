@@ -4,6 +4,7 @@ export class MarkerCollection {
         this.markers = []; // { marker, properties }
         this.size = 2.5;
         this.color = "green";
+        this.borderColor = "black";
         this.clickHandler = null;
     }
 
@@ -12,7 +13,8 @@ export class MarkerCollection {
         const svg = `
           <svg xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}">
             <circle cx="${this.size}" cy="${this.size}"
-                    r="${this.size - 1}" fill="${this.color}" />
+                    r="${this.size - 1}" fill="${this.color}"
+                    stroke="${this.borderColor}" stroke-width="${1}" />
           </svg>
         `;
 
@@ -61,6 +63,15 @@ export class MarkerCollection {
 
     getColor() {
         return this.color;
+    }
+
+    setBorderColor(color) {
+        if (this.borderColor === color) return;
+        this.borderColor = color;
+        const newIcon = this.#createIcon();
+        for (const markerObj of this.markers) {
+            markerObj.marker.setIcon(newIcon);
+        }
     }
 
     setSize(size) {
