@@ -1,4 +1,4 @@
-import { getToken, setToken, clearToken } from './auth/auth.js';
+import { getToken, setToken, clearToken } from './auth.js';
 
 export async function request(method, path, body = null) {
     const headers = {};

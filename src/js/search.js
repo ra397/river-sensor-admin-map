@@ -1,6 +1,7 @@
-let markerCollection = null;
+let markers = null;
 let map = null;
 let resultsContainer = null;
+let observatoryData = null;
 
 const SEARCH_PROPERTIES = ['name', 'sid', 'river', 'town'];
 const MAX_RESULTS = 5;
@@ -14,30 +15,28 @@ function createResultsContainer() {
     return container;
 }
 
-function scoreMatch(marker, query) {
+function scoreMatch(observatory, query) {
     const q = query.toLowerCase();
 
     for (let i = 0; i < SEARCH_PROPERTIES.length; i++) {
         const prop = SEARCH_PROPERTIES[i];
-        const value = marker.properties[prop];
+        const value = observatory[prop];
         if (value == null) continue;
 
         const str = String(value).toLowerCase();
         if (str.startsWith(q)) {
-            // Earlier properties get higher priority (lower score = better)
-            return { score: i, matchType: 'starts', prop, value: String(marker.properties[prop]) };
+            return { score: i, matchType: 'starts', prop, value: String(value) };
         }
     }
 
     for (let i = 0; i < SEARCH_PROPERTIES.length; i++) {
         const prop = SEARCH_PROPERTIES[i];
-        const value = marker.properties[prop];
+        const value = observatory[prop];
         if (value == null) continue;
 
         const str = String(value).toLowerCase();
         if (str.includes(q)) {
-            // Contains matches are scored after all startsWith matches
-            return { score: SEARCH_PROPERTIES.length + i, matchType: 'contains', prop, value: String(marker.properties[prop]) };
+            return { score: SEARCH_PROPERTIES.length + i, matchType: 'contains', prop, value: String(value) };
         }
     }
 
@@ -45,22 +44,17 @@ function scoreMatch(marker, query) {
 }
 
 function search(query) {
-    if (!query || query.trim() === '') {
-        return [];
-    }
+    if (!query || query.trim() === '') return [];
 
     const results = [];
+    const trimmed = query.trim();
 
-    for (const marker of markerCollection.markers) {
-        const match = scoreMatch(marker, query.trim());
-        if (match) {
-            results.push({ marker, ...match });
-        }
+    for (const observatory of observatoryData) {
+        const match = scoreMatch(observatory, trimmed);
+        if (match) results.push({ observatory, ...match });
     }
 
-    // Sort by score (lower is better)
     results.sort((a, b) => a.score - b.score);
-
     return results.slice(0, MAX_RESULTS);
 }
 
@@ -76,12 +70,12 @@ function renderResults(results) {
         const item = document.createElement('div');
         item.className = 'search-result-item';
 
-        const name = result.marker.properties.name || 'Unknown';
-        const matchInfo = result.prop !== 'name' ? ` (${result.prop}: ${result.value})` : '';
+        const name = result.observatory.name || 'Unknown';
+        const matchInfo = result.prop !== 'name' ? ` (${result.value})` : '';
         item.textContent = name + matchInfo;
 
         item.addEventListener('click', () => {
-            zoomToMarker(result.marker);
+            zoomToObservatory(result.observatory);
             clearSearch();
         });
 
@@ -91,10 +85,12 @@ function renderResults(results) {
     resultsContainer.classList.add('visible');
 }
 
-function zoomToMarker(markerObj) {
-    const pos = markerObj.marker.getPosition();
-    map.setCenter(pos);
+function zoomToObservatory(observatory) {
+    map.setCenter({ lat: observatory.latitude, lng: observatory.longitude });
     map.setZoom(14);
+
+    const marker = markers.get(observatory.oid);
+    if (marker) markers.select(marker);
 }
 
 function clearSearch() {
@@ -105,9 +101,7 @@ function clearSearch() {
 }
 
 function handleInput(e) {
-    const query = e.target.value;
-    const results = search(query);
-    renderResults(results);
+    renderResults(search(e.target.value));
 }
 
 function handleClickOutside(e) {
@@ -119,14 +113,14 @@ function handleClickOutside(e) {
 
 function handleFocus(e) {
     if (e.target.value.trim() !== '') {
-        const results = search(e.target.value);
-        renderResults(results);
+        renderResults(search(e.target.value));
     }
 }
 
-export function initSearch(collection, mapInstance) {
-    markerCollection = collection;
+export function initSearch(markersInstance, mapInstance, data) {
+    markers = markersInstance;
     map = mapInstance;
+    observatoryData = data;
     resultsContainer = createResultsContainer();
 
     const input = document.getElementById('search-input');

@@ -1,32 +1,26 @@
-import { isAuthenticated } from "./js/auth/auth.js";
-import { showView } from "./js/auth/authController.js";
-import { initFilters } from "./js/filter.js";
-import { initSearch } from "./js/search.js";
-import { map } from "./js/map.js";
-import { MarkerCollection } from "./js/markerCollection.js";
+import { map } from './js/map.js';
+import { Markers } from "./js/marker.js";
 import { getObservatoryData } from "./js/api.js";
+import { initSearch } from "./js/search.js";
+import {initFilters} from "./js/filter.js";
 
-async function initApp() {
-    const observatories = await getObservatoryData();
-    const bridgeSensorMarkers = new MarkerCollection(map);
-    for (const observatory of observatories) {
-        bridgeSensorMarkers.add(observatory.latitude, observatory.longitude, observatory);
+const markers = new Markers({
+    map: map,
+    onClick: (marker) => {
+        markers.select(marker);
     }
-    bridgeSensorMarkers.setSize(5.0);
-    bridgeSensorMarkers.onClick((marker) => {
-        console.log(marker.properties);
-    });
-    initFilters(bridgeSensorMarkers);
-    initSearch(bridgeSensorMarkers, map);
-}
+})
 
-// Listen for login event
-window.addEventListener('auth:login', () => initApp());
+const observatories = await getObservatoryData();
+console.log(observatories);
+observatories.forEach((observatory) => {
+    // Create a marker for each observatory
+    markers.add({
+        id: observatory.oid,
+        position: { lat: observatory.latitude, lng: observatory.longitude },
+        color: 'green',
+    })
+});
 
-// Entry
-if (isAuthenticated()) {
-    showView('main-view');
-    await initApp();
-} else {
-    showView('login-view');
-}
+initSearch(markers, map, observatories);
+initFilters(markers, observatories);
