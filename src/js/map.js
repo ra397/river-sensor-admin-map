@@ -16,9 +16,10 @@ export const map = new google.maps.Map(document.getElementById('map'), {
     clickableIcons: false,
 });
 
-const stateBordersSrc = `${import.meta.env.BASE_URL}/assets/state_borders.geojson.gz`;
+const stateBordersSrc = `${import.meta.env.BASE_URL}assets/state_borders.geojson`;
 const res = await fetch(stateBordersSrc);
-const geojson = await res.json();
+const decompressed = res.body.pipeThrough(new DecompressionStream("gzip"));
+const geojson = await new Response(decompressed).json();
 map.data.addGeoJson(geojson);
 map.data.setStyle({
     strokeColor: "#000",

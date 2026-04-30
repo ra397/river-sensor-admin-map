@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 
 export default defineConfig(({ command }) => ({
-    base: command === 'serve' ? '/hydroiowa/riversensor' : './',
+    base: command === 'serve' ? '/hydroiowa/riversensor/' : './',
     build: {
         sourcemap: true,
     },
