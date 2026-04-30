@@ -80,3 +80,8 @@
 .filter-option:hover {
     background: var(--light-gray);
 }
+
+.filter-option-disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}

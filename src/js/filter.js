@@ -2,14 +2,16 @@ let markers = null;
 let observatoryData = null;
 
 let filterState = {};
-let filterCounts = {};
+let filterMemory = {};
+
+const SHOW_ALL = 'Show All';
 
 const filters = {
-    status:           { label: 'Status',         type: 'includes', options: ['active', 'decommissioned', 'maintenance', 'retired'] },
-    sampling_rate:    { label: 'Rate',           type: 'includes', options: ['2', '3', '4', '5'] },
-    firmware_version: { label: 'Firmware',       type: 'includes', options: ['0.6', '0.86', '0.88', '0.89', '0.90', '1.00', '1.01', '6.1'] },
-    no_packet_days:   { label: 'No Packet Days', type: 'range',    options: ['< 7', '7 - 14', '> 14'] },
-    voltage:          { label: 'Voltage',        type: 'range',    options: ['< 10', '10 - 11', '11 - 12', '12 - 13', '> 13'] },
+    status:           { label: 'Status',         type: 'includes', options: ['Show All', 'active', 'decommissioned', 'maintenance', 'retired'] },
+    sampling_rate:    { label: 'Rate',           type: 'includes', options: ['Show All', '2', '3', '4', '5'] },
+    firmware_version: { label: 'Firmware',       type: 'includes', options: ['Show All', '0.6', '0.86', '0.88', '0.89', '0.90', '1.00', '1.01', '6.1'] },
+    no_packet_days:   { label: 'No Packet Days', type: 'range',    options: ['Show All', '< 7', '7 - 14', '> 14'] },
+    voltage:          { label: 'Voltage',        type: 'range',    options: ['Show All', '< 10', '10 - 11', '11 - 12', '12 - 13', '> 13'] },
     tools:            { label: 'Tools',          type: 'includes', options: ['Show All', 'Ticket', 'Public Note'] },
 };
 
@@ -36,11 +38,11 @@ function renderFilters(filters) {
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
             checkbox.value = option;
-            checkbox.checked = true;
-            checkbox.dataset.category = key;
+            checkbox.checked = (option === SHOW_ALL);
+            checkbox.dataset.filterCategory = key;
 
             checkbox.addEventListener('change', (e) => {
-                toggleFilterOption(e.target.dataset.category, e.target.value, e.target.checked);
+                toggleFilterOption(e.target.dataset.filterCategory, e.target.value, e.target.checked);
                 applyFilters();
             });
 
@@ -52,25 +54,58 @@ function renderFilters(filters) {
         groupEl.appendChild(optionsEl);
         container.appendChild(groupEl);
     }
+
+    syncAllCheckboxDisabledStates();
 }
 
 function resetFilterState(filters) {
     for (const key of Object.keys(filterState)) delete filterState[key];
-    for (const key of Object.keys(filterCounts)) delete filterCounts[key];
+    for (const key of Object.keys(filterMemory)) delete filterMemory[key];
 
-    for (const [key, filter] of Object.entries(filters)) {
-        filterState[key] = [...filter.options];
-        filterCounts[key] = filter.options.length;
+    for (const [key] of Object.entries(filters)) {
+        filterState[key] = [SHOW_ALL];
     }
 }
 
 function toggleFilterOption(category, value, checked) {
     if (checked) {
-        if (!filterState[category].includes(value)) {
+        if (value === SHOW_ALL) {
+            // Stash everything else, then collapse to Show All
+            filterMemory[category] = filterState[category].filter(v => v !== SHOW_ALL);
+            filterState[category] = [SHOW_ALL];
+        } else {
+            filterState[category] = filterState[category].filter(v => v !== SHOW_ALL);
             filterState[category].push(value);
         }
     } else {
-        filterState[category] = filterState[category].filter(v => v !== value);
+        if (value === SHOW_ALL) {
+            // Restore the stashed selection
+            const remembered = filterMemory[category] || [];
+            filterState[category] = [...remembered];
+        } else {
+            filterState[category] = filterState[category].filter(v => v !== value);
+        }
+    }
+    syncCheckboxDisabledState(category);
+}
+
+function syncCheckboxDisabledState(category) {
+    const showAllChecked = filterState[category].includes(SHOW_ALL);
+    const checkboxes = document.querySelectorAll(
+        `input[type="checkbox"][data-filter-category="${category}"]`
+    );
+    checkboxes.forEach(cb => {
+        if (cb.value === SHOW_ALL) return;
+        cb.disabled = showAllChecked;
+        cb.checked = !showAllChecked && filterState[category].includes(cb.value);
+        const label = cb.closest('label');
+        if (label) label.classList.toggle('filter-option-disabled', showAllChecked);
+    });
+}
+
+function syncAllCheckboxDisabledStates() {
+    for (const category of Object.keys(filters)) {
+        syncCheckboxDisabledState(category);
     }
 }
 
@@ -89,14 +124,16 @@ function buildFilterFunc() {
         for (const [key, filter] of Object.entries(filters)) {
             const selected = filterState[key];
 
-            // Tools filter is always applied (unless 'Show All' is selected)
+            // Show All: skip this category
+            if (selected && selected.includes(SHOW_ALL)) continue;
+
+            // Nothing selected: hide
+            if (!selected || selected.length === 0) return false;
+
             if (key === 'tools') {
-                if (!selected || selected.length === 0) return false;
                 if (!matchesToolFilter(data, selected)) return false;
                 continue;
             }
-
-            if (!selected || selected.length >= filterCounts[key]) continue;
 
             const value = data[key];
             if (filter.type === 'range') {
@@ -128,7 +165,6 @@ function matchesRange(value, rangeStr) {
 }
 
 function matchesToolFilter(data, selectedTools) {
-    if (selectedTools.includes('Show All')) return true;
     for (const tool of selectedTools) {
         if (tool === 'Ticket' && data.tickets && data.tickets.length > 0) return true;
         if (tool === 'Public Note' && data.public_note != null) return true;
