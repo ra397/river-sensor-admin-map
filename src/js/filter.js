@@ -10,7 +10,7 @@ const filters = {
     firmware_version: { label: 'Firmware',       type: 'includes', options: ['0.6', '0.86', '0.88', '0.89', '0.90', '1.00', '1.01', '6.1'] },
     no_packet_days:   { label: 'No Packet Days', type: 'range',    options: ['< 7', '7 - 14', '> 14'] },
     voltage:          { label: 'Voltage',        type: 'range',    options: ['< 10', '10 - 11', '11 - 12', '12 - 13', '> 13'] },
-    tools:            { label: 'Tools',          type: 'includes', options: ['Ticket', 'Public Note'] },
+    tools:            { label: 'Tools',          type: 'includes', options: ['Show All', 'Ticket', 'Public Note'] },
 };
 
 function renderFilters(filters) {
@@ -88,12 +88,15 @@ function buildFilterFunc() {
     return function (data) {
         for (const [key, filter] of Object.entries(filters)) {
             const selected = filterState[key];
-            if (!selected || selected.length >= filterCounts[key]) continue;
 
+            // Tools filter is always applied (unless 'Show All' is selected)
             if (key === 'tools') {
+                if (!selected || selected.length === 0) return false;
                 if (!matchesToolFilter(data, selected)) return false;
                 continue;
             }
+
+            if (!selected || selected.length >= filterCounts[key]) continue;
 
             const value = data[key];
             if (filter.type === 'range') {
@@ -125,6 +128,7 @@ function matchesRange(value, rangeStr) {
 }
 
 function matchesToolFilter(data, selectedTools) {
+    if (selectedTools.includes('Show All')) return true;
     for (const tool of selectedTools) {
         if (tool === 'Ticket' && data.tickets && data.tickets.length > 0) return true;
         if (tool === 'Public Note' && data.public_note != null) return true;
