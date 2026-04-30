@@ -13,4 +13,17 @@ export const map = new google.maps.Map(document.getElementById('map'), {
     minZoom: 5,
     maxZoom: 18,
     mapId: import.meta.env.VITE_GOOGLE_MAPS_ID,
+    clickableIcons: false,
+});
+
+const stateBordersSrc = `${import.meta.env.BASE_URL}/assets/state_borders.geojson.gz`;
+const res = await fetch(stateBordersSrc);
+const geojson = await res.json();
+map.data.addGeoJson(geojson);
+map.data.setStyle({
+    strokeColor: "#000",
+    strokeWeight: 0.35,
+    strokeOpacity: 0.7,
+    fillOpacity: 0.0,
+    clickable: false,
 });
