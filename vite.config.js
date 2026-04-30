@@ -1,7 +1,10 @@
 import { defineConfig } from 'vite'
 
-export default defineConfig({
-    base: '/hydroiowa/riversensor',
+export default defineConfig(({ command }) => ({
+    base: command === 'serve' ? '/hydroiowa/riversensor' : './',
+    build: {
+        sourcemap: true,
+    },
     server: {
         port: 3432,
         proxy: {
@@ -12,4 +15,4 @@ export default defineConfig({
             },
         }
     }
-})
+}))
