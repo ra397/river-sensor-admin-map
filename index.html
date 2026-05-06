@@ -21,7 +21,26 @@
                     </div>
                 </div>
 
-                <div id="map"></div>
+                <div id="map">
+                    <div class="color-control-container">
+                        <label class="color-control-item">
+                            <input type="checkbox" name="markers-colorBy" data-colorBy="voltage">
+                            <img src="/src/assets/icons/battery.svg" alt="Voltage"/>
+                        </label>
+
+                        <label class="color-control-item">
+                            <input type="checkbox" name="markers-colorBy" data-colorBy="firmware_version">
+                            <img src="/src/assets/icons/firmware.svg" alt="Firmware"/>
+                        </label>
+
+                        <label class="color-control-item">
+                            <input type="checkbox" name="markers-colorBy" data-colorBy="no_packet_days">
+                            <img src="/src/assets/icons/packet.svg" alt="No packet days"/>
+                        </label>
+                    </div>
+
+                    <div id="legend"></div>
+                </div>
             </div>
         </div>
         <script type="module" src="/src/main.js"></script>

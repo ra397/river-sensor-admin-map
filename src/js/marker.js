@@ -95,6 +95,8 @@ export class Markers {
         this.#active?.setSelected(false);
         this.#active = marker;
         marker?.setSelected(true);
+
+        marker?.setVisible(true);
     }
 
     remove(marker) {
@@ -102,6 +104,10 @@ export class Markers {
         if (idx === -1) return;
         marker.destroy();
         this.#markers.splice(idx, 1);
+    }
+
+    forEach(callback) {
+        this.#markers.forEach(callback);
     }
 
     removeAll() {

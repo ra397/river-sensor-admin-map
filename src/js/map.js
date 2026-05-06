@@ -7,13 +7,20 @@ setOptions({ key: import.meta.env.VITE_GOOGLE_MAPS_KEY });
 const libs = import.meta.env.VITE_GOOGLE_MAPS_LIBS.split(',').map(l => l.trim());
 await Promise.all(libs.map(lib => importLibrary(lib)));
 
-export const map = new google.maps.Map(document.getElementById('map'), {
+const mapEl = document.getElementById('map');
+const mapMenus = Array.from(mapEl.children); // take snapshot before Google Maps API wipes #map container
+
+export const map = new google.maps.Map(mapEl, {
     center: { lat: 42.0656, lng: -93.38978 },
     zoom: 8,
     minZoom: 5,
     maxZoom: 18,
     mapId: import.meta.env.VITE_GOOGLE_MAPS_ID,
     clickableIcons: false,
+    streetViewControl: false,
+    cameraControl: false,
+    fullscreenControl: false,
+    mapTypeControl: false,
 });
 
 const stateBordersSrc = `${import.meta.env.BASE_URL}assets/state_borders.geojson`;
@@ -28,3 +35,6 @@ map.data.setStyle({
     fillOpacity: 0.0,
     clickable: false,
 });
+
+// Add menus
+mapMenus.forEach(el => mapEl.appendChild(el));

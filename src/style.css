@@ -2,6 +2,8 @@
 @import './css/sidebar.css';
 @import './css/search.css';
 @import './css/marker.css';
+@import './css/color-by.css';
+@import './css/colorbar.css';
 
 :root {
     --black: #000;
@@ -39,4 +41,5 @@ body {
 #map {
     height: 100%;
     width: 100%;
+    position: relative;
 }

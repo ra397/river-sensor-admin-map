@@ -1,0 +1,45 @@
+#legend {
+    position: absolute;
+    top: 50%;
+    right: 5px;
+    backdrop-filter: blur(10px);
+    background: rgba(230, 229, 229, 0.6);
+    padding: 10px;
+}
+
+.colorbar {
+    font: 12px sans-serif;
+}
+.colorbar-title {
+    font-weight: bold;
+    margin-bottom: 2ch;
+}
+.colorbar-body {
+    display: flex;
+    gap: 1ch;
+}
+.colorbar-swatches {
+    display: flex;
+    flex-direction: column;
+    width: 20px;
+}
+.colorbar-swatch {
+    flex: 1;
+    min-height: 24px;
+    outline: 1px solid #ccc;
+}
+.colorbar-labels {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.colorbar-label {
+    line-height: 0;
+    transform: translateY(-50%);
+}
+.colorbar-label:first-child {
+    transform: translateY(0);
+}
+.colorbar-label:last-child {
+    transform: translateY(-100%);
+}
