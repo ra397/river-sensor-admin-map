@@ -1,6 +1,6 @@
 #legend {
     position: absolute;
-    top: 50%;
+    top: 10%;
     right: 5px;
     backdrop-filter: blur(10px);
     background: rgba(230, 229, 229, 0.6);
