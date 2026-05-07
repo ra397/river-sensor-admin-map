@@ -45,7 +45,7 @@ export async function getObservatoryData() {
         request('GET', '/packets/latest_observation'),
         request('GET', '/packets/daily-min-voltage'),
         request('GET', '/packets/no-packet-days'),
-        request('GET', '/tickets'),
+        request('GET', '/tickets/active'),
     ]);
 
     const sensorBySid      = Object.fromEntries(sensors.map(s => [s.sid, s]));
