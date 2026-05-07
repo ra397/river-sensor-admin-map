@@ -26,7 +26,7 @@ export const colorByConfig = {
     },
     firmware_version: {
         title: 'Firmware',
-        colors: ["#FF3B30","#FF9500","#FFCC00","#34C759","#00C7BE","#007AFF","#5856D6","#AF52DE"].reverse(),
+        colors: ['#7C2D12', '#B45309', '#D97706', '#F59E0B', '#FBBF24', '#7DD3FC', '#38BDF8', '#0284C7'].reverse(),
         ticks: ['0.6', '0.86', '0.88', '0.89', '0.9', '1.00', '1.01', '6.1', ''].reverse(),
     },
     no_packet_days: {
