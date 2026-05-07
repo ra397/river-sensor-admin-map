@@ -4,6 +4,7 @@
 @import './css/marker.css';
 @import './css/color-by.css';
 @import './css/colorbar.css';
+@import './css/renderObservatory.css';
 
 :root {
     --black: #000;
@@ -42,4 +43,8 @@ body {
     height: 100%;
     width: 100%;
     position: relative;
+}
+
+.hidden {
+    display: none !important;
 }

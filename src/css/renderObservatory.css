@@ -1,0 +1,37 @@
+#renderObservatoryContainer {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    z-index: 9999;
+
+    background: white;
+
+    display: flex;
+    flex-direction: column;
+    padding: 0.5em;
+}
+
+.observatory-row-container {
+    display: flex;
+    gap: 1ch;
+}
+
+.observatory-row-container > .observatory-label {
+    font-size: 0.85em;
+    min-width: 14ch;
+    max-width: 20ch;
+    opacity: 0.7;
+}
+
+.observatory-row-container > .observatory-value {
+    max-width: 20ch;
+}
+
+.observatory-close-container {
+    position: absolute;
+    top: 0;
+    right: 1em;
+
+    cursor: pointer;
+    user-select: none;
+}

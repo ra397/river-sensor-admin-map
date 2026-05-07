@@ -5,13 +5,29 @@ import { initSearch } from "./js/search.js";
 import { initFilters } from "./js/filter.js";
 import { colorByConfig, getColor } from "./js/colorByUI.js";
 import { ColorBar } from "./js/ColorBar.js";
+import { renderObservatory } from "./js/renderObservatory.js";
+
+const renderObservatoryContainerEl = document.querySelector("#renderObservatoryContainer");
 
 const markers = new Markers({
     map: map,
     onClick: (marker) => {
         markers.select(marker);
+        const observatory = getObservatory(observatories, marker.getId());
+        if (observatory) {
+            renderObservatory(renderObservatoryContainerEl, observatory);
+        }
     }
-})
+});
+
+function getObservatory(observatories, oid) {
+    for (const observatory of observatories) {
+        if (observatory['oid'] === oid) {
+            return observatory;
+        }
+    }
+    return null;
+}
 
 const observatories = await getObservatoryData();
 observatories.forEach((observatory) => {
@@ -22,6 +38,8 @@ observatories.forEach((observatory) => {
         color: 'green',
     })
 });
+
+getObservatory(observatories, 6);
 
 const bar = new ColorBar(document.getElementById('legend'));
 window.addEventListener('colorby:change', (e) => {
