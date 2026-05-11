@@ -8,6 +8,7 @@ import { ColorBar } from "./js/ColorBar.js";
 import { renderObservatoryInfoWindow } from "./js/renderObservatory.js";
 import { updateReports } from "./js/plots.js";
 import { showStreetView } from "./js/panorama.js";
+import { makeDraggable } from "./js/draggableContainer.js";
 
 const renderObservatoryContainerEl = document.querySelector("#renderObservatoryContainer");
 
@@ -100,3 +101,4 @@ document.querySelector('input[name="panorama"]').addEventListener('change', asyn
 
 initSearch(markers, map, observatories);
 initFilters(markers, observatories);
+makeDraggable(document.querySelectorAll('.draggable'));

@@ -50,3 +50,5 @@ export function renderObservatoryInfoWindow(container, observatory) {
         container.classList.add('hidden');
     })
 }
+
+document.getElementById("renderObservatoryContainer").classList.add('hidden');
