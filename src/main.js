@@ -5,8 +5,9 @@ import { initSearch } from "./js/search.js";
 import { initFilters } from "./js/filter.js";
 import { colorByConfig, getColor } from "./js/colorByUI.js";
 import { ColorBar } from "./js/ColorBar.js";
-import { renderObservatory } from "./js/renderObservatory.js";
+import { renderObservatoryInfoWindow } from "./js/renderObservatory.js";
 import { updateReports } from "./js/plots.js";
+import { showStreetView } from "./js/panorama.js";
 
 const renderObservatoryContainerEl = document.querySelector("#renderObservatoryContainer");
 
@@ -16,10 +17,13 @@ const markers = new Markers({
         markers.select(marker);
         const observatory = getObservatory(observatories, marker.getId());
         if (observatory) {
-            renderObservatory(renderObservatoryContainerEl, observatory);
+            renderObservatoryInfoWindow(renderObservatoryContainerEl, observatory);
         }
         if (showPlots) {
             await updateReports(marker.getId());
+        }
+        if (showPanorama) {
+            await showStreetView(marker.getPosition());
         }
     }
 });
@@ -81,6 +85,17 @@ document.querySelector('input[name="plots"]').addEventListener('change', async (
     } else {
         document.querySelector('#plot-container').classList.add('hidden');
     }
+});
+
+let showPanorama = false;
+document.querySelector('input[name="panorama"]').addEventListener('change', async (e) => {
+   showPanorama = e.target.checked;
+   if (showPanorama) {
+       const selectedMarker = markers.getSelected();
+       if (selectedMarker) await showStreetView(selectedMarker.getPosition());
+   } else {
+       document.querySelector('#pano-container').classList.add('hidden');
+   }
 });
 
 initSearch(markers, map, observatories);

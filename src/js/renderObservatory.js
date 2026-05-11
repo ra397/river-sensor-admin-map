@@ -19,7 +19,7 @@ const FIELD_LABELS = [
     { key: 'cooperator', label: 'Cooperator' },
 ];
 
-export function renderObservatory(container, observatory) {
+export function renderObservatoryInfoWindow(container, observatory) {
     container.querySelectorAll('.observatory-row-container').forEach(el => el.remove());
     container.classList.remove('hidden');
 

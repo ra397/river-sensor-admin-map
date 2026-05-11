@@ -1,0 +1,16 @@
+#pano-container {
+    position: absolute;
+    top: 20px;
+    right: 50%;
+    width: 480px;
+    height: 360px;
+    z-index: 10;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+#pano {
+    width: 100%;
+    height: 100%;
+}

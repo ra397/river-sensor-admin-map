@@ -6,6 +6,7 @@
 @import './css/colorbar.css';
 @import './css/renderObservatory.css';
 @import './css/plot.css';
+@import './css/panorama.css';
 
 :root {
     --black: #000;
@@ -56,4 +57,5 @@ body {
 
     cursor: pointer;
     user-select: none;
+    z-index: 50;
 }
