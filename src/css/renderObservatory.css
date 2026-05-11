@@ -26,12 +26,3 @@
 .observatory-row-container > .observatory-value {
     max-width: 20ch;
 }
-
-.observatory-close-container {
-    position: absolute;
-    top: 0;
-    right: 1em;
-
-    cursor: pointer;
-    user-select: none;
-}

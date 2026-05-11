@@ -20,7 +20,7 @@ const FIELD_LABELS = [
 ];
 
 export function renderObservatory(container, observatory) {
-    container.innerHTML = '';
+    container.querySelectorAll('.observatory-row-container').forEach(el => el.remove());
     container.classList.remove('hidden');
 
     FIELD_LABELS.forEach(field => {
@@ -45,11 +45,7 @@ export function renderObservatory(container, observatory) {
         }
     });
 
-    const closeContainerEl = document.createElement('span');
-    closeContainerEl.textContent = '✕';
-    closeContainerEl.classList.add('observatory-close-container');
-    container.appendChild(closeContainerEl);
-
+    const closeContainerEl = container.querySelector('.close-button');
     closeContainerEl.addEventListener('click', () => {
         container.classList.add('hidden');
     })

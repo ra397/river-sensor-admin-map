@@ -168,3 +168,7 @@ function toDateStr(n) {
 
 buildPlotlyToggles();
 hidePlotly();
+
+plotlyContainerEl.querySelector('.close-button').addEventListener('click', () => {
+    plotlyContainerEl.classList.add('hidden');
+})
