@@ -5,6 +5,7 @@
 @import './css/color-by.css';
 @import './css/colorbar.css';
 @import './css/renderObservatory.css';
+@import './css/plot.css';
 
 :root {
     --black: #000;

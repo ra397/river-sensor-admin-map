@@ -1,0 +1,31 @@
+#plot-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+    width: fit-content;
+    height: fit-content;
+    background: white;
+}
+
+.plot {
+    width: 450px;
+    height: 300px;
+}
+
+.toggle-container {
+    display: flex;
+    justify-content: space-around;
+    padding-right: 1ch;
+}
+
+.toggle-item {
+    font-size: 0.9em;
+    color: var(--light-gray);
+    cursor: pointer;
+    user-select: none;
+}
+
+.toggle-item.active {
+    color: var(--light-blue);
+}

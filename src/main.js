@@ -6,16 +6,20 @@ import { initFilters } from "./js/filter.js";
 import { colorByConfig, getColor } from "./js/colorByUI.js";
 import { ColorBar } from "./js/ColorBar.js";
 import { renderObservatory } from "./js/renderObservatory.js";
+import { updateReports } from "./js/plots.js";
 
 const renderObservatoryContainerEl = document.querySelector("#renderObservatoryContainer");
 
 const markers = new Markers({
     map: map,
-    onClick: (marker) => {
+    onClick: async (marker) => {
         markers.select(marker);
         const observatory = getObservatory(observatories, marker.getId());
         if (observatory) {
             renderObservatory(renderObservatoryContainerEl, observatory);
+        }
+        if (showPlots) {
+            await updateReports(marker.getId());
         }
     }
 });
@@ -66,6 +70,17 @@ window.addEventListener('colorby:change', (e) => {
         colorByConfig[colorBy].title,
     );
     bar.show();
+});
+
+let showPlots = false;
+document.querySelector('input[name="plots"]').addEventListener('change', async (e) => {
+    showPlots = e.target.checked;
+    if (showPlots) {
+        const selectedMarker = markers.getSelected();
+        if (selectedMarker) await updateReports(selectedMarker.getId());
+    } else {
+        document.querySelector('#plot-container').classList.add('hidden');
+    }
 });
 
 initSearch(markers, map, observatories);

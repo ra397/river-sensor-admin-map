@@ -99,6 +99,10 @@ export class Markers {
         marker?.setVisible(true);
     }
 
+    getSelected() {
+        return this.#active;
+    }
+
     remove(marker) {
         const idx = this.#markers.indexOf(marker);
         if (idx === -1) return;

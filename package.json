@@ -12,6 +12,7 @@
     "vite": "^8.0.4"
   },
   "dependencies": {
-    "@googlemaps/js-api-loader": "^2.0.2"
+    "@googlemaps/js-api-loader": "^2.0.2",
+    "plotly.js-dist-min": "^3.5.1"
   }
 }

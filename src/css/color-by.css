@@ -1,25 +1,21 @@
-.color-control-container {
+.icon-group {
     position: absolute;
-    top: 0;
-    right: 0;
     z-index: 9999;
-
     background: white;
-
     display: flex;
 }
 
-.color-control-item {
+.icon-group-item {
     cursor: pointer;
 }
 
-.color-control-item input[type="checkbox"] {
+.icon-group-item input[type="checkbox"] {
     position: absolute;
     opacity: 0;
     pointer-events: none;
 }
 
-.color-control-container img {
+.icon-group img {
     width: 35px;
     height: 35px;
     border: 2px solid transparent;
@@ -27,7 +23,17 @@
     padding: 1ch;
 }
 
-.color-control-item input[type="checkbox"]:checked + img {
+.icon-group-item input[type="checkbox"]:checked + img {
     border-color: #007AFF;
     background: #e6f0ff;
+}
+
+.color-control {
+    top: 0;
+    right: 0;
+}
+
+.popup-control {
+    top: 0;
+    left: 0;
 }

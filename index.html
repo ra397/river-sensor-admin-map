@@ -22,24 +22,41 @@
                 </div>
 
                 <div id="map">
-                    <div class="color-control-container">
-                        <label class="color-control-item">
+                    <div class="icon-group popup-control">
+                        <label class="icon-group-item">
+                            <input type="checkbox" name="plots">
+                            <img src="/src/assets/icons/plot.svg" alt="Plots">
+                        </label>
+
+                        <label class="icon-group-item">
+                            <input type="checkbox" name="panorama">
+                            <img src="/src/assets/icons/360.svg" alt="360">
+                        </label>
+                    </div>
+
+                    <div class="icon-group color-control">
+                        <label class="icon-group-item">
                             <input type="checkbox" name="markers-colorBy" data-colorBy="voltage">
                             <img src="/src/assets/icons/battery.svg" alt="Voltage"/>
                         </label>
 
-                        <label class="color-control-item">
+                        <label class="icon-group-item">
                             <input type="checkbox" name="markers-colorBy" data-colorBy="firmware_version">
                             <img src="/src/assets/icons/firmware.svg" alt="Firmware"/>
                         </label>
 
-                        <label class="color-control-item">
+                        <label class="icon-group-item">
                             <input type="checkbox" name="markers-colorBy" data-colorBy="no_packet_days">
                             <img src="/src/assets/icons/packet.svg" alt="No packet days"/>
                         </label>
                     </div>
 
                     <div id="legend"></div>
+
+                    <div id="plot-container">
+                        <div class="toggle-container"></div>
+                        <div class="plotly-body"></div>
+                    </div>
 
                     <div id="renderObservatoryContainer"></div>
                 </div>

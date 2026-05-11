@@ -1,4 +1,4 @@
-const container = document.querySelector('.color-control-container');
+const container = document.querySelector('.color-control');
 const checkboxes = container.querySelectorAll('input[type="checkbox"]');
 
 checkboxes.forEach(cb => {

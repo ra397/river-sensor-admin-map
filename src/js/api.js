@@ -76,3 +76,8 @@ export async function getObservatoryData() {
         };
     });
 }
+
+export async function getReportData(variable, observatoryId, startDate, endDate) {
+    const params = new URLSearchParams({ bdt: startDate, edt: endDate });
+    return request('GET', `/reports/${variable}/${observatoryId}?${params}`);
+}
