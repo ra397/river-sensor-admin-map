@@ -1,6 +1,25 @@
 import { getToken, setToken, clearToken } from './auth.js';
+import apiConfig from './api-config.json';
 
-export async function request(method, path, body = null) {
+const baseUrl = apiConfig[apiConfig.mode];
+
+function buildUrl(endpoint, pathParams = {}, queryParams = {}) {
+    let path = endpoint;
+
+    for (const [key, value] of Object.entries(pathParams)) {
+        path = path.replace(`:${key}`, encodeURIComponent(value));
+    }
+
+    const query = new URLSearchParams(queryParams).toString();
+    return `${baseUrl}${path}${query ? `?${query}` : ''}`;
+}
+
+export async function request(name, { pathParams = {}, queryParams = {}, body = null } = {}) {
+    const config = apiConfig.requests[name];
+    if (!config) {
+        throw new Error(`Unknown request: ${name}`);
+    }
+
     const headers = {};
     const token = getToken();
 
@@ -12,8 +31,10 @@ export async function request(method, path, body = null) {
         headers['Content-Type'] = 'application/json';
     }
 
-    const response = await fetch(`/hydroiowa/api${path}`, {
-        method,
+    const url = buildUrl(config.endpoint, pathParams, queryParams);
+
+    const response = await fetch(url, {
+        method: config.method,
         headers,
         body: body ? JSON.stringify(body) : null,
     });
@@ -40,19 +61,19 @@ export async function request(method, path, body = null) {
 
 export async function getObservatoryData() {
     const [observatories, sensors, latestObs, voltages, noPacketDays, tickets] = await Promise.all([
-        request('GET', '/observatories'),
-        request('GET', '/sensors'),
-        request('GET', '/packets/latest_observation'),
-        request('GET', '/packets/daily-min-voltage'),
-        request('GET', '/packets/no-packet-days'),
-        request('GET', '/tickets/active'),
+        request('observatories'),
+        request('sensors'),
+        request('latest_observation'),
+        request('daily_min_voltage'),
+        request('no_packet_days'),
+        request('active_tickets'),
     ]);
 
-    const sensorBySid      = Object.fromEntries(sensors.map(s => [s.sid, s]));
-    const latestObsByOid   = Object.fromEntries(latestObs.map(o => [o.oid, o]));
-    const voltageBySid     = Object.fromEntries(voltages.map(v => [v.sid, v]));
-    const noPacketDaysByOid= Object.fromEntries(noPacketDays.map(o => [o.oid, o]));
-    const ticketsByObsName = tickets.reduce((acc, t) => {
+    const sensorBySid       = Object.fromEntries(sensors.map(s => [s.sid, s]));
+    const latestObsByOid    = Object.fromEntries(latestObs.map(o => [o.oid, o]));
+    const voltageBySid      = Object.fromEntries(voltages.map(v => [v.sid, v]));
+    const noPacketDaysByOid = Object.fromEntries(noPacketDays.map(o => [o.oid, o]));
+    const ticketsByObsName  = tickets.reduce((acc, t) => {
         const { observatory, sensor_id, ...rest } = t;
         (acc[observatory] ??= []).push(rest);
         return acc;
@@ -60,7 +81,7 @@ export async function getObservatoryData() {
 
     return observatories.map(obs => {
         const { sid, status, ...obsRest } = obs;
-        const sensor  = sensorBySid[sid] ?? null;
+        const sensor = sensorBySid[sid] ?? null;
 
         const { sid: _sid, ...voltageRest } = voltageBySid[sensor?.sid] ?? {};
         const voltage = sensor ? (Object.keys(voltageRest).length ? voltageRest : null) : null;
@@ -78,6 +99,8 @@ export async function getObservatoryData() {
 }
 
 export async function getReportData(variable, observatoryId, startDate, endDate) {
-    const params = new URLSearchParams({ bdt: startDate, edt: endDate });
-    return request('GET', `/reports/${variable}/${observatoryId}?${params}`);
+    return request('report', {
+        pathParams: { variable, observatoryId },
+        queryParams: { bdt: startDate, edt: endDate },
+    });
 }

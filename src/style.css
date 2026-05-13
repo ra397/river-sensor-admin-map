@@ -51,6 +51,7 @@ body {
 .hidden {
     display: none !important;
 }
+
 .close-button {
     position: absolute;
     top: 0;

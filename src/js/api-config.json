@@ -1,0 +1,51 @@
+{
+  "mode": "dev_api",
+  "dev_api": "//s-iihr80.iihr.uiowa.edu/hydroiowa/api",
+  "prod_api": "//hydroiowa.org/api2",
+  "requests": {
+    "observatories": {
+      "method": "GET",
+      "endpoint": "/observatories"
+    },
+    "sensors": {
+      "method": "GET",
+      "endpoint": "/sensors"
+    },
+    "latest_observation": {
+      "method": "GET",
+      "endpoint": "/packets/latest_observation"
+    },
+    "daily_min_voltage": {
+      "method": "GET",
+      "endpoint": "/packets/daily-min-voltage"
+    },
+    "no_packet_days": {
+      "method": "GET",
+      "endpoint": "/packets/no-packet-days"
+    },
+    "active_tickets": {
+      "method": "GET",
+      "endpoint": "/tickets/active"
+    },
+    "report": {
+      "method": "GET",
+      "endpoint": "/reports/:variable/:observatoryId",
+      "query": ["bdt", "edt"]
+    },
+    "login": {
+      "method": "POST",
+      "endpoint": "/login",
+      "body": ["email", "password"]
+    },
+    "forgot_password": {
+      "method": "POST",
+      "endpoint": "/forgot-password",
+      "body": ["email"]
+    },
+    "reset_password": {
+      "method": "POST",
+      "endpoint": "/reset-password",
+      "body": ["email", "code", "password"]
+    }
+  }
+}
