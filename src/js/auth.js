@@ -1,4 +1,4 @@
-import apiConfig from './api-config.json';
+import { apiConfig } from "./importApiConfig.js";
 
 const TOKEN_KEY = 'access_token';
 const baseUrl = apiConfig[apiConfig.mode];

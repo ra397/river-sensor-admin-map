@@ -1,5 +1,5 @@
 import { getToken, setToken, clearToken } from './auth.js';
-import apiConfig from './api-config.json';
+import { apiConfig } from "./importApiConfig.js";
 
 const baseUrl = apiConfig[apiConfig.mode];
 
@@ -15,7 +15,7 @@ function buildUrl(endpoint, pathParams = {}, queryParams = {}) {
 }
 
 export async function request(name, { pathParams = {}, queryParams = {}, body = null } = {}) {
-    const config = apiConfig.requests[name];
+    const config = apiConfig['requests'][name];
     if (!config) {
         throw new Error(`Unknown request: ${name}`);
     }
