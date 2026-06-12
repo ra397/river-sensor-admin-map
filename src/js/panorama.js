@@ -34,5 +34,3 @@ export async function showStreetView(latLng) {
 panoContainer.querySelector('.close-button').addEventListener('click', () => {
     panoContainer.classList.add('hidden');
 });
-
-panoContainer.classList.add('hidden');
