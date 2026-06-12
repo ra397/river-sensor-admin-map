@@ -77,26 +77,39 @@ window.addEventListener('colorby:change', (e) => {
     bar.show();
 });
 
+const plotContainer = document.querySelector('#plot-container');
+const plotCheckbox = document.querySelector('input[name="plots"]');
 let showPlots = false;
-document.querySelector('input[name="plots"]').addEventListener('change', async (e) => {
+plotCheckbox.addEventListener('change', async (e) => {
     showPlots = e.target.checked;
     if (showPlots) {
         const selectedMarker = markers.getSelected();
         if (selectedMarker) await updateReports(selectedMarker.getId());
     } else {
-        document.querySelector('#plot-container').classList.add('hidden');
+        plotContainer.classList.add('hidden');
     }
 });
+plotContainer.querySelector('.close-button').addEventListener('click', () => {
+    showPlots = false;
+    plotCheckbox.checked = false;
+});
 
+const panoContainer = document.querySelector('#pano-container');
+const panoCheckbox = document.querySelector('input[name="panorama"]');
 let showPanorama = false;
-document.querySelector('input[name="panorama"]').addEventListener('change', async (e) => {
+panoCheckbox.addEventListener('change', async (e) => {
    showPanorama = e.target.checked;
    if (showPanorama) {
        const selectedMarker = markers.getSelected();
        if (selectedMarker) await showStreetView(selectedMarker.getPosition());
    } else {
-       document.querySelector('#pano-container').classList.add('hidden');
+       panoContainer.classList.add('hidden');
    }
+});
+
+panoContainer.querySelector('.close-button').addEventListener('click', () => {
+    showPanorama = false;
+    panoCheckbox.checked = false;
 });
 
 initSearch(markers, map, observatories);
