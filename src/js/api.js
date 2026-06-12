@@ -1,7 +1,8 @@
 import { getToken, setToken, clearToken } from './auth.js';
 import { apiConfig } from "./importApiConfig.js";
 
-const baseUrl = apiConfig[apiConfig.mode];
+// const baseUrl = apiConfig[apiConfig.mode];
+const baseUrl = '/api2';
 
 function buildUrl(endpoint, pathParams = {}, queryParams = {}) {
     let path = endpoint;
@@ -92,7 +93,7 @@ export async function getObservatoryData() {
             ...sensor,
             voltage: voltage?.minV_14 ?? null,
             latest_observation: latestObsByOid[obs.oid]?.dt_time ?? null,
-            no_packet_days: noPacketDays ? noPacketDays : null,
+            no_packet_days: noPacketDays ?? null,
             tickets: ticketsByObsName[obs.name] ?? [],
         };
     });
