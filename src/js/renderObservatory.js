@@ -35,7 +35,12 @@ export function renderObservatoryInfoWindow(container, observatory) {
             labelEl.classList.add('observatory-label');
 
             const valueEl = document.createElement('span');
-            valueEl.textContent = String(value);
+            if (field.key === 'latest_observation') {
+                const dt = new Date(value);
+                valueEl.textContent = dt.toLocaleString();
+            } else {
+                valueEl.textContent = String(value);
+            }
             valueEl.classList.add('observatory-value');
 
             rowContainerEl.append(labelEl);
