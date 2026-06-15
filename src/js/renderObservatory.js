@@ -17,6 +17,7 @@ const FIELD_LABELS = [
     { key: 'latest_observation', label: 'Latest Observation' },
     { key: 'no_packet_days', label: 'Days Without Packet' },
     { key: 'cooperator', label: 'Cooperator' },
+    { key: 'public_note', label: 'Public Note' },
 ];
 
 export function renderObservatoryInfoWindow(container, observatory) {
