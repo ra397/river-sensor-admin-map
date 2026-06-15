@@ -105,3 +105,7 @@ export async function getReportData(variable, observatoryId, startDate, endDate)
         queryParams: { bdt: startDate, edt: endDate },
     });
 }
+
+export async function editTicket(id, data) {
+    return request('edit_ticket', { pathParams: { id }, body: data });
+}

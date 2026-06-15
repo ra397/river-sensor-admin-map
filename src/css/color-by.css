@@ -1,31 +1,34 @@
 .icon-group {
     position: absolute;
     z-index: 9999;
-    background: white;
     display: flex;
+    gap: 1ch;
+
+    padding: 1ch;
 }
 
 .icon-group-item {
-    cursor: pointer;
+    background: #fff;
+    padding: 0.5ch;
+    border-radius: 4px;
+
+    height: 35px;
 }
 
 .icon-group-item input[type="checkbox"] {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
+    display: none;
 }
 
 .icon-group img {
-    width: 35px;
     height: 35px;
-    border: 2px solid transparent;
-    border-radius: 6px;
-    padding: 1ch;
+    aspect-ratio: 1;
 }
 
 .icon-group-item input[type="checkbox"]:checked + img {
     border-color: #007AFF;
     background: #e6f0ff;
+
+    outline: 1px solid red;
 }
 
 .color-control {

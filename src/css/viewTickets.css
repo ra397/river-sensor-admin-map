@@ -1,0 +1,29 @@
+.tickets-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+
+    user-select: none;
+}
+
+.tickets-table th,
+.tickets-table td {
+    padding: 0.5em 0.75em;
+    text-align: left;
+}
+
+.tickets-table th {
+    border-bottom: 1px solid var(--light-gray);
+    font-weight: 600;
+    opacity: 0.7;
+    font-size: 0.85em;
+}
+
+.tickets-table tbody tr:hover {
+    background: var(--dark-gray);
+    cursor: pointer;
+}
+
+.tickets-table td {
+    border-bottom: 1px solid var(--dark-gray);
+}

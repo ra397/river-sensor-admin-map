@@ -9,46 +9,69 @@ import { renderObservatoryInfoWindow } from "./js/renderObservatory.js";
 import { updateReports } from "./js/plots.js";
 import { showStreetView } from "./js/panorama.js";
 import { makeDraggable } from "./js/draggableContainer.js";
+import {renderTickets} from "./js/renderTickets.js";
 
 const renderObservatoryContainerEl = document.querySelector("#renderObservatoryContainer");
 
-const markers = new Markers({
-    map: map,
-    onClick: async (marker) => {
-        markers.select(marker);
-        const observatory = getObservatory(observatories, marker.getId());
-        if (observatory) {
-            renderObservatoryInfoWindow(renderObservatoryContainerEl, observatory);
-        }
-        if (showPlots) {
-            await updateReports(marker.getId());
-        }
-        if (showPanorama) {
-            await showStreetView(marker.getPosition());
-        }
-    }
-});
+let observatories = [];
+let markers = null;
+let showPlots = false;
+let showPanorama = false;
 
-function getObservatory(observatories, oid) {
-    for (const observatory of observatories) {
-        if (observatory['oid'] === oid) {
-            return observatory;
-        }
-    }
-    return null;
+function getObservatory(oid) {
+    return observatories.find(o => o.oid === oid) || null;
 }
 
-const observatories = await getObservatoryData();
-observatories.forEach((observatory) => {
-    // Create a marker for each observatory
-    markers.add({
-        id: observatory.oid,
-        position: { lat: observatory.latitude, lng: observatory.longitude },
-        color: 'green',
-    })
-});
+async function handleMarkerClick(marker) {
+    markers.select(marker);
+    const observatory = getObservatory(marker.getId());
+    if (observatory) {
+        await renderObservatoryInfoWindow(renderObservatoryContainerEl, observatory);
+    }
+    if (showPlots) {
+        await updateReports(marker.getId());
+    }
+    if (showPanorama) {
+        await showStreetView(marker.getPosition());
+    }
 
-getObservatory(observatories, 6);
+    const viewTicketsEl = document.querySelector('#viewTickets');
+    if (!viewTicketsEl.classList.contains('hidden')) {
+        if (observatory?.tickets?.length > 0) {
+            await renderTickets(viewTicketsEl, observatory);
+        } else {
+            viewTicketsEl.classList.add('hidden');
+        }
+    }
+
+    const editTicketEl = document.querySelector('#editTicket');
+    if (!editTicketEl.classList.contains('hidden')) {
+        editTicketEl.classList.add('hidden');
+    }
+}
+
+function initMarkers() {
+    markers = new Markers({
+        map: map,
+        onClick: handleMarkerClick,
+    });
+    observatories.forEach((observatory) => {
+        markers.add({
+            id: observatory.oid,
+            position: { lat: observatory.latitude, lng: observatory.longitude },
+            color: 'green',
+        });
+    });
+}
+
+async function loadObservatories() {
+    observatories = await getObservatoryData();
+    initMarkers();
+}
+
+await loadObservatories();
+
+window.addEventListener("update:observatories", loadObservatories);
 
 const bar = new ColorBar(document.getElementById('legend'));
 window.addEventListener('colorby:change', (e) => {
@@ -79,7 +102,6 @@ window.addEventListener('colorby:change', (e) => {
 
 const plotContainer = document.querySelector('#plot-container');
 const plotCheckbox = document.querySelector('input[name="plots"]');
-let showPlots = false;
 plotCheckbox.addEventListener('change', async (e) => {
     showPlots = e.target.checked;
     if (showPlots) {
@@ -96,7 +118,6 @@ plotContainer.querySelector('.close-button').addEventListener('click', () => {
 
 const panoContainer = document.querySelector('#pano-container');
 const panoCheckbox = document.querySelector('input[name="panorama"]');
-let showPanorama = false;
 panoCheckbox.addEventListener('change', async (e) => {
    showPanorama = e.target.checked;
    if (showPanorama) {

@@ -4,6 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="src/style.css" />
+        <link rel="shortcut icon" href="//uiowa.edu/profiles/custom/sitenow/assets/favicon.ico">
         <title>stream-sensor-network-administration-map</title>
     </head>
     <body>
@@ -66,6 +67,74 @@
 
                     <div id="renderObservatoryContainer" class="draggable hidden">
                         <span class="close-button">✕</span>
+                    </div>
+
+                    <div id="login-container" class="pop-up-container draggable hidden">
+                        <form id="login-form">
+                            <h2>Login</h2>
+                            <label for="login-email"></label><input type="email" id="login-email" placeholder="Email" required />
+                            <label for="login-password"></label><input type="password" id="login-password" placeholder="Password" required />
+                            <button type="submit" class="btn submit-btn login-btn">Login</button>
+                            <span id="forgot-password-link" class="link">Forgot password?</span>
+                        </form>
+                    </div>
+
+                    <div id="forgot-password-container" class="pop-up-container draggable hidden">
+                        <div id="forgot-password-form">
+                            <h2>Reset Password</h2>
+                            <label for="forgot-email"></label><input type="email" id="forgot-email" placeholder="Email" required />
+                            <button type="button" id="get-otp-btn" class="btn submit-btn login-btn">Get One-Time Code</button>
+                            <span class="link back-to-login">Back to login</span>
+                        </div>
+                    </div>
+
+                    <div id="new-password-container" class="pop-up-container draggable hidden">
+                        <div id="new-password-form">
+                            <h2>Reset Password</h2>
+                            <label for="reset-email"></label><input type="email" id="reset-email" placeholder="Email" autocomplete="off" required />
+                            <label for="reset-otp"></label><input type="text" id="reset-otp" placeholder="One-Time Code" autocomplete="one-time-code" required />
+                            <label for="reset-password"></label><input type="password" id="reset-password" placeholder="New Password" autocomplete="new-password" required />
+                            <label for="reset-password-confirm"></label><input type="password" id="reset-password-confirm" placeholder="Confirm New Password" autocomplete="new-password" required />
+                            <button type="button" id="reset-password-btn" class="btn submit-btn login-btn">Reset Password</button>
+                            <span class="link back-to-login">Back to login</span>
+                        </div>
+                    </div>
+
+                    <div id="createTicket" class="draggable hidden"></div>
+
+                    <div id="viewTickets" class="pop-up-container draggable hidden">
+                        <span class="close-button">✕</span>
+                    </div>
+
+                    <div id="editTicket" class="pop-up-container modal draggable hidden">
+                        <div class="modal-header">
+                            <span class="modal-title">Edit Ticket</span>
+                            <span class="close-button">X</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="modal-row">
+                                <label class="modal-label">Bridge<input name="observatory" class="modal-input" type="text"></label>
+                            </div>
+                            <div class="modal-row">
+                                <label class="modal-label">Problem<textarea name="problem" class="modal-input"></textarea></label>
+                            </div>
+                            <div class="modal-row">
+                                <label class="modal-label">Assigned to <select name="assignee" class="modal-input" data-prefill="maintenanceCrew"><option value="James Niemeier">James Niemeier</option><option value="Weber, Larry J">Weber, Larry J</option><option value="Lyons, Troy">Lyons, Troy</option><option value="Alan Doran">Alan Doran</option><option value="Radek GoSKA">Radek GoSKA</option></select></label>
+                                <label class="modal-label">Status <select name="status" class="modal-input" data-mode="edit" data-prefill="ticketStatus"><option value="assigned">assigned</option><option value="suspended">suspended</option><option value="done">done</option></select></label>
+                            </div>
+                            <div class="modal-row">
+                                <label class="modal-label">Notes <input name="notes" class="modal-input" type="text"></label>
+                            </div>
+                        </div>
+                        <div class="modal-actions">
+                            <!-- Existing buttons (visible when NOT confirming) -->
+                            <button class="secondary reset-btn">Reset</button>
+                            <button class="primary submit-btn" disabled="">Save</button>
+
+                            <!-- Confirm buttons (visible only when confirming) -->
+                            <button class="secondary cancel-btn">Cancel</button>
+                            <button class="primary approve-btn">Approve</button>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,3 +1,7 @@
+import { renderTickets } from "./renderTickets.js";
+import {isAuthenticated} from "./auth.js";
+import {showForm} from "./authUI.js";
+
 const FIELD_LABELS = [
     { key: 'name', label: 'Name' },
     { key: 'sid', label: 'SID' },
@@ -20,9 +24,20 @@ const FIELD_LABELS = [
     { key: 'public_note', label: 'Public Note' },
 ];
 
-export function renderObservatoryInfoWindow(container, observatory) {
+export async function renderObservatoryInfoWindow(container, observatory, authRequired = false) {
+    if (authRequired) {
+        if (!isAuthenticated()) {
+            // Launch authentication
+            showForm(document.getElementById('login-container'));
+            await new Promise(resolve => {
+                window.addEventListener('auth:login', resolve, {once: true});
+            });
+        }
+    }
+
     container.querySelectorAll('.observatory-row-container').forEach(el => el.remove());
     container.classList.remove('hidden');
+
 
     FIELD_LABELS.forEach(field => {
         const value = observatory[field.key];
@@ -59,6 +74,11 @@ export function renderObservatoryInfoWindow(container, observatory) {
         const viewTicketBtn = document.createElement('button');
         viewTicketBtn.textContent = "View Tickets";
         viewTicketBtn.classList.add('secondary');
+
+        viewTicketBtn.addEventListener('click', () => {
+            renderTickets(document.getElementById("viewTickets"), observatory);
+        })
+
         btnContainer.appendChild(viewTicketBtn);
     }
 

@@ -1,7 +1,8 @@
 import { apiConfig } from "./importApiConfig.js";
 
 const TOKEN_KEY = 'access_token';
-const baseUrl = apiConfig[apiConfig.mode];
+// const baseUrl = apiConfig[apiConfig.mode];
+const baseUrl = '/api2';
 
 export function getToken() {
     return sessionStorage.getItem(TOKEN_KEY);
