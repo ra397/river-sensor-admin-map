@@ -51,10 +51,26 @@ export function renderObservatoryInfoWindow(container, observatory) {
         }
     });
 
+
+    const btnContainer = document.createElement('div');
+    btnContainer.classList.add('observatory-row-container');
+
+    if (observatory.tickets.length > 0) {
+        const viewTicketBtn = document.createElement('button');
+        viewTicketBtn.textContent = "View Tickets";
+        viewTicketBtn.classList.add('secondary');
+        btnContainer.appendChild(viewTicketBtn);
+    }
+
+    const createTicketBtn = document.createElement('button');
+    createTicketBtn.textContent = "Create Ticket";
+    createTicketBtn.classList.add('primary');
+    btnContainer.appendChild(createTicketBtn);
+
+    container.appendChild(btnContainer);
+
     const closeContainerEl = container.querySelector('.close-button');
     closeContainerEl.addEventListener('click', () => {
         container.classList.add('hidden');
     })
 }
-
-document.getElementById("renderObservatoryContainer").classList.add('hidden');

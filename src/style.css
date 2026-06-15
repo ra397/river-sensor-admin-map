@@ -52,6 +52,28 @@ body {
     display: none !important;
 }
 
+button {
+    width: 100%;
+    border: none;
+    border-radius: 4px;
+    line-height: var(--line-height);
+    cursor: pointer;
+
+    margin-top: 1em;
+}
+
+.primary {
+    background: var(--light-blue);
+    outline: none;
+    color: white;
+}
+
+.secondary {
+    background: white;
+    outline: 1px solid var(--light-blue);
+    color: var(--light-blue);
+}
+
 .close-button {
     position: absolute;
     top: 0;
