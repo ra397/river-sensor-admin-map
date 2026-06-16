@@ -100,9 +100,19 @@ button:disabled {
 .close-button {
     position: absolute;
     top: 0;
-    right: 1em;
-
+    right: 0;
     cursor: pointer;
     user-select: none;
-    z-index: 50;
+    background-color: #e6e6e67d;
+    aspect-ratio: 1 / 1;
+    height: 1.6em;
+    line-height: 1.6em;
+    text-align: center;
+    font-size: 0.8em;
+    z-index: 1;
+}
+
+.close-button:hover {
+    background-color: #DE5246;
+    color: white;
 }
