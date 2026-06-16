@@ -10,9 +10,15 @@
 .icon-group-item {
     background: #fff;
     padding: 0.5ch;
+    border: 2px solid transparent;
+    transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
 
     height: 35px;
     cursor: pointer;
+}
+
+.icon-group-item:hover {
+    background: #f5f5f5;
 }
 
 .icon-group-item input[type="checkbox"] {
@@ -24,11 +30,10 @@
     aspect-ratio: 1;
 }
 
-.icon-group-item input[type="checkbox"]:checked + img {
-    border-color: #007AFF;
-    background: #e6f0ff;
-
-    outline: 1px solid red;
+.icon-group-item:has(input[type="checkbox"]:checked) {
+    border-color: var(--light-blue);
+    background: #e8f1ff;
+    box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.2);
 }
 
 .color-control {
