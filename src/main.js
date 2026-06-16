@@ -147,3 +147,17 @@ panoContainer.querySelector('.close-button').addEventListener('click', () => {
 initSearch(markers, map, observatories);
 initFilters(markers, observatories);
 makeDraggable(document.querySelectorAll('.draggable'));
+
+// Sidebar toggle
+const sidebar = document.getElementById('sidebar');
+const sidebarToggle = document.getElementById('sidebar-toggle');
+
+if (!localStorage.getItem('sidebarUsed')) {
+    sidebarToggle.classList.add('hint');
+}
+
+sidebarToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('collapsed');
+    sidebarToggle.classList.remove('hint');
+    localStorage.setItem('sidebarUsed', 'true');
+});

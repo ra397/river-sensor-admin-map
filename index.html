@@ -10,19 +10,24 @@
     <body>
         <div id="main-view">
             <div id="app-body">
-                <div id="sidebar">
-                    <div class="sidebar-section">
-                        <label for="search-input"></label>
-                        <input type="search" id="search-input" placeholder="Search...">
-                    </div>
+                <div id="sidebar" class="collapsed">
+                    <div class="sidebar-content">
+                        <div class="sidebar-section">
+                            <label for="search-input"></label>
+                            <input type="search" id="search-input" placeholder="Search...">
+                        </div>
 
-                    <div class="sidebar-section">
-                        <label class="sidebar-heading">Filters</label>
-                        <div id="filter-groups"></div>
+                        <div class="sidebar-section">
+                            <label class="sidebar-heading">Filters</label>
+                            <div id="filter-groups"></div>
+                        </div>
                     </div>
                 </div>
 
                 <div id="map">
+                    <span id="sidebar-toggle" class="icon-group-item sidebar-toggle" title="Filter">
+                        <img src="/src/assets/icons/filter.svg" alt="Filter">
+                    </span>
                     <div class="icon-group popup-control">
                         <label class="icon-group-item" title="Plots">
                             <input type="checkbox" name="plots">

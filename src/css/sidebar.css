@@ -4,9 +4,53 @@
     gap: 1em;
 
     flex: 0 0 200px;
-    margin-top: var(--line-height);
+    margin-top: 1em;
     padding-right: 0.5em;
     padding-left: 0.5em;
+
+    overflow: hidden;
+    transition: flex-basis 0.2s ease, padding 0.2s ease, opacity 0.2s ease;
+}
+
+#sidebar.collapsed {
+    flex-basis: 0;
+    padding-right: 0;
+    padding-left: 0;
+    opacity: 0;
+}
+
+.sidebar-toggle {
+    position: absolute;
+    left: 0;
+    top: 0.5em;
+    cursor: pointer;
+}
+
+.sidebar-toggle img {
+    width: 35px;
+    aspect-ratio: 1;
+}
+
+@keyframes pulse-hint {
+    0%, 100% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+    50% {
+        transform: scale(1.15);
+        filter: brightness(1.2);
+    }
+}
+
+.sidebar-toggle.hint {
+    animation: pulse-hint 1s ease-in-out infinite;
+}
+
+.sidebar-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    overflow: hidden;
 }
 
 .sidebar-heading {

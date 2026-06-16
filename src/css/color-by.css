@@ -10,9 +10,9 @@
 .icon-group-item {
     background: #fff;
     padding: 0.5ch;
-    border-radius: 4px;
 
     height: 35px;
+    cursor: pointer;
 }
 
 .icon-group-item input[type="checkbox"] {
@@ -38,5 +38,5 @@
 
 .popup-control {
     top: 0;
-    left: 0;
+    left: 45px;
 }
