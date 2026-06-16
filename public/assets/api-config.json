@@ -47,6 +47,10 @@
       "endpoint": "/reset-password",
       "body": ["email", "code", "password"]
     },
+    "create_ticket": {
+      "method": "POST",
+      "endpoint": "/tickets"
+    },
     "edit_ticket": {
       "method": "PUT",
       "endpoint": "/tickets/:id"

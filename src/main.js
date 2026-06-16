@@ -65,8 +65,19 @@ function initMarkers() {
 }
 
 async function loadObservatories() {
+    const previouslySelectedMarkerId =  markers?.getSelected()?.getId() ?? null;
     observatories = await getObservatoryData();
     initMarkers();
+    if (previouslySelectedMarkerId) {
+        const marker = markers.get(previouslySelectedMarkerId);
+        if (marker) {
+            markers.select(marker);
+            const observatory = getObservatory(previouslySelectedMarkerId);
+            if (observatory) {
+                await renderObservatoryInfoWindow(renderObservatoryContainerEl, observatory);
+            }
+        }
+    }
 }
 
 await loadObservatories();

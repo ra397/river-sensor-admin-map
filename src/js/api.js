@@ -106,6 +106,10 @@ export async function getReportData(variable, observatoryId, startDate, endDate)
     });
 }
 
+export async function createTicket(data) {
+    return request('create_ticket', { body: data });
+}
+
 export async function editTicket(id, data) {
     return request('edit_ticket', { pathParams: { id }, body: data });
 }

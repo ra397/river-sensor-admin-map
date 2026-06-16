@@ -1,49 +1,51 @@
-import {editTicket} from "./api.js";
+import {createTicket} from "./api.js";
 import {
     getFormData,
-    getDiff,
     enterConfirm,
     exitConfirm,
     requireAuth,
     setFormValues,
+    resetFormToDefaults,
     setupFormListeners
 } from "./ticketForm.js";
 
-export async function renderEditTicket(container, ticket, observatoryName, authRequired = true) {
+function isFormValid(data) {
+    return data.observatory && data.problem;
+}
+
+export async function renderCreateTicket(container, observatory, authRequired = true) {
     await requireAuth(authRequired);
 
     container.classList.remove('hidden');
 
-    setFormValues(container, {
-        observatory: observatoryName,
-        problem: ticket.problem,
-        assignee: ticket.assignee,
-        status: ticket.status,
-        notes: ticket.notes
-    });
+    const defaults = {
+        observatory: observatory.name,
+        problem: '',
+        assignee: null,
+        status: null,
+        notes: ''
+    };
 
-    let initialData = getFormData(container);
+    resetFormToDefaults(container, defaults);
+
     let cleanup;
 
     function checkForChanges() {
-        const diff = getDiff(initialData, getFormData(container));
-        submitBtn.disabled = Object.keys(diff).length === 0;
+        const data = getFormData(container);
+        submitBtn.disabled = !isFormValid(data);
     }
 
     function handleReset() {
-        setFormValues(container, initialData);
+        resetFormToDefaults(container, defaults);
         submitBtn.disabled = true;
     }
 
     async function handleApprove() {
-        const dataToSubmit = getDiff(initialData, getFormData(container));
-        await editTicket(ticket['ticket_id'], dataToSubmit);
+        const data = getFormData(container);
+        await createTicket(data);
         exitConfirm(container);
-
-        Object.assign(ticket, dataToSubmit);
-        initialData = getFormData(container);
-        submitBtn.disabled = true;
-
+        cleanup();
+        container.classList.add('hidden');
         window.dispatchEvent(new CustomEvent('update:observatories'));
     }
 
@@ -57,7 +59,7 @@ export async function renderEditTicket(container, ticket, observatoryName, authR
     }
 
     function handleSubmit() {
-        enterConfirm(container, initialData);
+        enterConfirm(container, null);
     }
 
     const { submitBtn, cleanup: cleanupFn } = setupFormListeners(container, {

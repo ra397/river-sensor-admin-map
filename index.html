@@ -100,7 +100,36 @@
                         </div>
                     </div>
 
-                    <div id="createTicket" class="draggable hidden"></div>
+                    <div id="createTicket" class="modal pop-up-container draggable hidden">
+                        <div class="modal-header">
+                            <span class="modal-title">Create Ticket</span>
+                            <span class="close-button">X</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="modal-row">
+                                <label class="modal-label">Bridge<input name="observatory" class="modal-input" type="text"></label>
+                            </div>
+                            <div class="modal-row">
+                                <label class="modal-label">Problem<textarea name="problem" class="modal-input"></textarea></label>
+                            </div>
+                            <div class="modal-row">
+                                <label class="modal-label">Assigned to <select name="assignee" class="modal-input" data-prefill="maintenanceCrew"><option value="James Niemeier">James Niemeier</option><option value="Weber, Larry J">Weber, Larry J</option><option value="Lyons, Troy">Lyons, Troy</option><option value="Alan Doran">Alan Doran</option><option value="Radek GoSKA">Radek GoSKA</option></select></label>
+                                <label class="modal-label">Status <select name="status" class="modal-input" data-mode="edit" data-prefill="ticketStatus"><option value="assigned">assigned</option><option value="suspended">suspended</option><option value="done">done</option></select></label>
+                            </div>
+                            <div class="modal-row">
+                                <label class="modal-label">Notes <input name="notes" class="modal-input" type="text"></label>
+                            </div>
+                            <div class="modal-actions">
+                                <!-- Existing buttons (visible when NOT confirming) -->
+                                <button class="secondary reset-btn">Reset</button>
+                                <button class="primary submit-btn" disabled="">Save</button>
+
+                                <!-- Confirm buttons (visible only when confirming) -->
+                                <button class="secondary cancel-btn">Cancel</button>
+                                <button class="primary approve-btn">Approve</button>
+                            </div>
+                        </div>
+                    </div>
 
                     <div id="viewTickets" class="pop-up-container draggable hidden">
                         <span class="close-button">✕</span>

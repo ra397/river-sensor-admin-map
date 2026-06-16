@@ -1,6 +1,7 @@
 import { renderTickets } from "./renderTickets.js";
 import {isAuthenticated} from "./auth.js";
 import {showForm} from "./authUI.js";
+import {renderCreateTicket} from "./renderCreateTicket.js";
 
 const FIELD_LABELS = [
     { key: 'name', label: 'Name' },
@@ -85,6 +86,11 @@ export async function renderObservatoryInfoWindow(container, observatory, authRe
     const createTicketBtn = document.createElement('button');
     createTicketBtn.textContent = "Create Ticket";
     createTicketBtn.classList.add('primary');
+
+    createTicketBtn.addEventListener('click', () => {
+        renderCreateTicket(document.getElementById("createTicket"), observatory);
+    })
+
     btnContainer.appendChild(createTicketBtn);
 
     container.appendChild(btnContainer);
