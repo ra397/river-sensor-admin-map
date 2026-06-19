@@ -91,6 +91,7 @@ export async function getObservatoryData() {
         return {
             ...obsRest,
             ...sensor,
+            status, // overwrite status field from sensor and take it from observatory
             voltage: voltage?.minV_14 ?? null,
             latest_observation: latestObsByOid[obs.oid]?.dt_time ?? null,
             no_packet_days: noPacketDays ?? null,

@@ -7,7 +7,7 @@ let filterMemory = {};
 const SHOW_ALL = 'Show All';
 
 const filters = {
-    status:           { label: 'Status',         type: 'includes', options: ['Show All', 'active', 'decommissioned', 'maintenance', 'retired'] },
+    status:           { label: 'Status',         type: 'includes', options: ['Show All', 'active', 'defective', 'suspended', 'retired'] },
     sampling_rate:    { label: 'Rate',           type: 'includes', options: ['Show All', '2', '3', '4', '5'] },
     firmware_version: { label: 'Firmware',       type: 'includes', options: ['Show All', '0.6', '0.86', '0.88', '0.89', '0.90', '1.00', '1.01', '6.1'] },
     no_packet_days:   { label: 'No Packet Days', type: 'range',    options: ['Show All', '< 7', '7 - 14', '> 14'] },
