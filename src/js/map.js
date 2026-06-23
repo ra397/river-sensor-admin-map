@@ -15,7 +15,6 @@ export const map = new google.maps.Map(mapEl, {
     zoom: 8,
     minZoom: 5,
     maxZoom: 18,
-    mapId: import.meta.env.VITE_GOOGLE_MAPS_ID,
     clickableIcons: false,
     streetViewControl: false,
     cameraControl: false,

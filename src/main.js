@@ -9,7 +9,8 @@ import { renderObservatoryInfoWindow } from "./js/renderObservatory.js";
 import { updateReports } from "./js/plots.js";
 import { showStreetView } from "./js/panorama.js";
 import { makeDraggable } from "./js/draggableContainer.js";
-import {renderTickets} from "./js/renderTickets.js";
+import { renderTickets } from "./js/renderTickets.js";
+import { initMapStyleControl } from "./js/mapStyles.js";
 
 const renderObservatoryContainerEl = document.querySelector("#renderObservatoryContainer");
 
@@ -147,6 +148,7 @@ panoContainer.querySelector('.close-button').addEventListener('click', () => {
 initSearch(markers, map, observatories);
 initFilters(markers, observatories);
 makeDraggable(document.querySelectorAll('.draggable'));
+initMapStyleControl(map);
 
 // Sidebar toggle
 const sidebar = document.getElementById('sidebar');

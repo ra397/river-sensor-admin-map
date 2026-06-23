@@ -2,7 +2,8 @@ class Marker {
     #id = null;
     #map = null;
     #marker = null;
-    #markerEl= null;
+    #color = null;
+    #selected = false;
     #onClick = null;
 
     constructor(options = {}) {
@@ -10,57 +11,72 @@ class Marker {
 
         this.#id = id;
         this.#map = map;
+        this.#color = color;
 
-        this.#markerEl = this.#buildElement(color);
-
-        this.#marker = new google.maps.marker.AdvancedMarkerElement({
+        this.#marker = new google.maps.Marker({
             position,
             map,
-            content: this.#markerEl,
+            icon: this.#buildIcon(color, false),
             zIndex: 9999,
         });
 
-        this.#onClick = this.#marker.addListener('gmp-click', (e) => {
+        this.#onClick = this.#marker.addListener('click', (e) => {
             onClick?.(this, e);
         });
     }
 
-    #buildElement(color) {
-        const el = document.createElement('div');
-        el.className = 'map-marker';
-        el.style.setProperty('--marker-color', color);
-        return el;
+    #buildIcon(color, selected) {
+        const size = 8;
+        const strokeColor = selected ? '#444' : '#000';
+        const strokeWidth = selected ? 2 : 1;
+
+        const svg = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="${size * 3}" height="${size * 3}" viewBox="0 0 ${size * 3} ${size * 3}">
+                <circle cx="${size * 1.5}" cy="${size * 1.5}" r="${size / 2}" fill="${color}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
+                ${selected ? `<circle cx="${size * 1.5}" cy="${size * 1.5}" r="${size}" fill="none" stroke="#444" stroke-width="2" opacity="0.6"/>` : ''}
+            </svg>
+        `;
+
+        return {
+            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
+            anchor: new google.maps.Point(size * 1.5, size * 1.5),
+            scaledSize: new google.maps.Size(size * 3, size * 3),
+        };
+    }
+
+    #updateIcon() {
+        this.#marker.setIcon(this.#buildIcon(this.#color, this.#selected));
     }
 
     getId() {
         return this.#id;
     }
 
-    setPosition(position) { this.#marker.position = position; }
+    setPosition(position) { this.#marker.setPosition(position); }
 
-    getPosition() { return this.#marker.position; }
+    getPosition() { return this.#marker.getPosition(); }
 
-    setZIndex(z) { this.#marker.zIndex = z; }
+    setZIndex(z) { this.#marker.setZIndex(z); }
 
     setSelected(selected) {
-        this.#markerEl.classList.toggle('selected', selected);
+        this.#selected = selected;
+        this.#updateIcon();
     }
 
     setColor(color) {
-        this.#markerEl.style.setProperty('--marker-color', color);
+        this.#color = color;
+        this.#updateIcon();
     }
 
     setVisible(visible) {
-        this.#marker.map = visible ? this.#map : null;
+        this.#marker.setMap(visible ? this.#map : null);
     }
 
     destroy() {
-        this.#onClick?.remove();
+        google.maps.event.removeListener(this.#onClick);
         this.#onClick = null;
-        this.#marker.map = null;
+        this.#marker.setMap(null);
         this.#marker = null;
-        this.#markerEl.remove();
-        this.#markerEl = null;
     }
 }
 
