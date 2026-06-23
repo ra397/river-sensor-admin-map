@@ -21,11 +21,11 @@
 .colorbar-swatches {
     display: flex;
     flex-direction: column;
-    width: 20px;
+    width: 25px;
 }
 .colorbar-swatch {
     flex: 1;
-    min-height: 24px;
+    min-height: 32px;
     outline: 1px solid #ccc;
 }
 .colorbar-labels {
