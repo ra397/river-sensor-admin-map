@@ -21,17 +21,17 @@ checkboxes.forEach(cb => {
 export const colorByConfig = {
     voltage: {
         title: 'Voltage',
-        colors: ['#d73027', '#fc8d59', '#fee08b', '#91cf60', '#1a9850'].reverse(),
+        colors: ['#00aa22', '#577018', '#725e15', '#b5320d', '#fe0104'],
         ticks: ['', '10', '11', '12', '13', ''].reverse()
     },
     firmware_version: {
         title: 'Firmware',
-        colors: ['#7C2D12', '#B45309', '#D97706', '#F59E0B', '#FBBF24', '#7DD3FC', '#38BDF8', '#0284C7'].reverse(),
+        colors: ['#047857', '#059669', '#10B981', '#34D399', '#6EE7B7', '#1E3A8A', '#2563EB', '#3B82F6'].reverse(),
         ticks: ['0.6', '0.86', '0.88', '0.89', '0.9', '1.00', '1.01', '6.1', ''].reverse(),
     },
     no_packet_days: {
         title: 'Packets',
-        colors: ['#d73027', '#fee08b', '#1a9850'],
+        colors: ['#00FF00', '#FF9F1C', '#FF0000'].reverse(),
         ticks: ['', '7', '14', ''].reverse()
     },
 }
