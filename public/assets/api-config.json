@@ -1,7 +1,4 @@
 {
-  "mode": "prod_api",
-  "dev_api": "//s-iihr80.iihr.uiowa.edu/hydroiowa/api",
-  "prod_api": "//hydroiowa.org/api2",
   "requests": {
     "observatories": {
       "method": "GET",
@@ -31,6 +28,10 @@
       "method": "GET",
       "endpoint": "/reports/:variable/:observatoryId",
       "query": ["bdt", "edt"]
+    },
+    "battery-report": {
+      "method": "GET",
+      "endpoint": "/reports/battery/:observatoryId/:years"
     },
     "login": {
       "method": "POST",

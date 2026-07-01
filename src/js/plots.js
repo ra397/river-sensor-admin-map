@@ -1,5 +1,5 @@
 import Plotly from 'plotly.js-dist-min';
-import { getReportData } from './api.js';
+import { getBatteryReportData, getReportData } from './api.js';
 
 const plotlyContainerEl = document.querySelector('#plot-container');
 
@@ -14,10 +14,10 @@ function hidePlotly() {
     plotlyContainerEl.classList.add('hidden');
 }
 
-function getDateRange() {
+function getDateRange(yearsBack = 1) {
     const endDate = new Date();
     const startDate = new Date();
-    startDate.setFullYear(startDate.getFullYear() - 1);
+    startDate.setFullYear(startDate.getFullYear() - yearsBack);
 
     const format = (date) => {
         const year = date.getFullYear();
@@ -45,6 +45,9 @@ const PLOT_CONFIG = {
             { key: 'max', xKey: 'dt', name: 'Max', mode: 'lines+markers', color: 'green' },
             { key: 'min', xKey: 'dt', name: 'Min', mode: 'lines+markers', color: 'red' }
         ],
+        yearsApi: true,
+        yearsBack: 3,
+        plotYearsBack: 1,
     },
     'measurements': {
         title: 'Measurements',
@@ -76,10 +79,16 @@ async function renderActivePlot() {
     container.appendChild(div);
 
     const config = PLOT_CONFIG[activePlot];
-    const { startDate, endDate } = getDateRange();
-    const data = await getReportData(activePlot, currentObservatoryId, startDate, endDate);
+    const yearsBack = config.yearsBack ?? 1;
+    const plotYearsBack = config.plotYearsBack ?? yearsBack;
+    const { startDate, endDate } = getDateRange(yearsBack);
+    const plotRangeDates = getDateRange(plotYearsBack);
 
-    Plotly.newPlot(activePlot, buildTraces(config, data), buildLayout(config, [toDateStr(startDate), toDateStr(endDate)]), {
+    const data = config.yearsApi
+        ? await getBatteryReportData(currentObservatoryId, yearsBack)
+        : await getReportData(activePlot, currentObservatoryId, startDate, endDate);
+
+    Plotly.newPlot(activePlot, buildTraces(config, data), buildLayout(config, [toDateStr(plotRangeDates.startDate), toDateStr(plotRangeDates.endDate)]), {
         displayModeBar: false,
         responsive: true,
     });

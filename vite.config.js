@@ -1,15 +1,14 @@
 import { defineConfig } from 'vite'
 
-export default defineConfig(({ command }) => ({
-    base: command === 'serve' ? '/hydroiowa/riversensor/' : './',
+export default defineConfig({
+    base: './',
     build: {
         sourcemap: true,
     },
     server: {
-        port: 3432,
         // proxy: {
-        //     '/hydroiowa/api': {
-        //         target: 'https://s-iihr80.iihr.uiowa.edu',
+        //     '/api2': {
+        //         target: 'http://localhost:8080',
         //         changeOrigin: true,
         //         secure: false,
         //     },
@@ -20,6 +19,6 @@ export default defineConfig(({ command }) => ({
                 changeOrigin: true,
                 secure: false,
             },
-        },
+        }
     }
-}))
+})

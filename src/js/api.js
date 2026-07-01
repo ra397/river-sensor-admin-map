@@ -1,8 +1,5 @@
 import { getToken, setToken, clearToken } from './auth.js';
-import { apiConfig } from "./importApiConfig.js";
-
-// const baseUrl = apiConfig[apiConfig.mode];
-const baseUrl = '/api2';
+import { baseUrl, apiConfig } from "./importApiConfig.js";
 
 function buildUrl(endpoint, pathParams = {}, queryParams = {}) {
     let path = endpoint;
@@ -104,6 +101,12 @@ export async function getReportData(variable, observatoryId, startDate, endDate)
     return request('report', {
         pathParams: { variable, observatoryId },
         queryParams: { bdt: startDate, edt: endDate },
+    });
+}
+
+export async function getBatteryReportData(observatoryId, years) {
+    return request('battery-report', {
+        pathParams: { observatoryId, years },
     });
 }
 
