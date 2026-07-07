@@ -34,16 +34,16 @@ const PLOT_CONFIG = {
         title: 'Packet Count',
         yaxis: 'Count',
         traces: [
-            { key: 'pkt_cnt', xKey: 'dt', name: 'Packet Count', mode: 'markers', color: 'blue' }
+            { key: 'pkt_cnt', xKey: 'dt', name: 'Packet Count', mode: 'markers', type: 'scattergl', color: 'blue' }
         ],
     },
     'battery': {
         title: 'Battery',
         yaxis: 'Voltage (V)',
         traces: [
-            { key: 'avg', xKey: 'dt', name: 'Average', mode: 'lines+markers', color: 'blue' },
-            { key: 'max', xKey: 'dt', name: 'Max', mode: 'lines+markers', color: 'green' },
-            { key: 'min', xKey: 'dt', name: 'Min', mode: 'lines+markers', color: 'red' }
+            { key: 'avg', xKey: 'dt', name: 'Average', mode: 'lines+markers', type: 'scattergl', color: 'blue' },
+            { key: 'max', xKey: 'dt', name: 'Max', mode: 'lines+markers', type: 'scattergl', color: 'green' },
+            { key: 'min', xKey: 'dt', name: 'Min', mode: 'lines+markers', type: 'scattergl', color: 'red' }
         ],
         yearsApi: true,
         yearsBack: 3,
@@ -53,16 +53,16 @@ const PLOT_CONFIG = {
         title: 'Measurements',
         yaxis: 'Value',
         traces: [
-            { key: 'primary', xKey: 'validtime', name: 'Primary', mode: 'markers', color: 'blue' }
+            { key: 'primary', xKey: 'validtime', name: 'Primary', mode: 'markers', type: 'scattergl', color: 'blue' }
         ],
     },
     'moisture': {
         title: 'Moisture',
         yaxis: 'Moisture (%)',
         traces: [
-            { key: 'avg', xKey: 'dt', name: 'Average', mode: 'lines+markers', color: 'blue' },
-            { key: 'max', xKey: 'dt', name: 'Max', mode: 'lines+markers', color: 'green' },
-            { key: 'min', xKey: 'dt', name: 'Min', mode: 'lines+markers', color: 'red' }
+            { key: 'avg', xKey: 'dt', name: 'Average', mode: 'lines+markers', type: 'scattergl', color: 'blue' },
+            { key: 'max', xKey: 'dt', name: 'Max', mode: 'lines+markers', type: 'scattergl', color: 'green' },
+            { key: 'min', xKey: 'dt', name: 'Min', mode: 'lines+markers', type: 'scattergl', color: 'red' }
         ],
     }
 };
