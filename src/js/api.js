@@ -117,3 +117,9 @@ export async function createTicket(data) {
 export async function editTicket(id, data) {
     return request('edit_ticket', { pathParams: { id }, body: data });
 }
+
+export async function getMaintenanceCrew() {
+    const crew = await request('maintenance_crew');
+    return crew.map(item => item.fullname);
+}
+globalThis.getMaintenanceCrew = getMaintenanceCrew;

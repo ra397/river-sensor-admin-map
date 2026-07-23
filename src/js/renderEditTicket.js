@@ -14,6 +14,17 @@ export async function renderEditTicket(container, ticket, observatoryName, authR
 
     container.classList.remove('hidden');
 
+    // Dynamically populate maintenance crew from API
+    const crew = await getMaintenanceCrew();
+    const crewSelect = container.querySelector('select[name="assignee"]');
+    crew.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item;
+        option.textContent = item;
+        crewSelect.appendChild(option);
+    });
+
+
     setFormValues(container, {
         observatory: observatoryName,
         problem: ticket.problem,

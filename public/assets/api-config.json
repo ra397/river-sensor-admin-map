@@ -55,6 +55,10 @@
     "edit_ticket": {
       "method": "PUT",
       "endpoint": "/tickets/:id"
+    },
+    "maintenance_crew": {
+      "method": "GET",
+      "endpoint": "/users/role/maintenance"
     }
   }
 }

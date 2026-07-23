@@ -16,6 +16,16 @@ function isFormValid(data) {
 export async function renderCreateTicket(container, observatory, authRequired = true) {
     await requireAuth(authRequired);
 
+    // Dynamically populate maintenance crew from API
+    const crew = await getMaintenanceCrew();
+    const crewSelect = container.querySelector('select[name="assignee"]');
+    crew.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item;
+        option.textContent = item;
+        crewSelect.appendChild(option);
+    });
+
     container.classList.remove('hidden');
 
     const defaults = {
