@@ -1,3 +1,6 @@
+const PULSE_PERIOD = 1300; // ms per ripple
+const PULSE_FPS    = 30;   // throttle: re-encoding the SVG is not free
+
 class Marker {
     #id = null;
     #map = null;
@@ -5,6 +8,10 @@ class Marker {
     #color = null;
     #selected = false;
     #onClick = null;
+
+    #rafId = null;
+    #pulseStart = 0;
+    #lastDraw = 0;
 
     constructor(options = {}) {
         const { id, position, map, color, onClick } = options;
@@ -25,32 +32,71 @@ class Marker {
         });
     }
 
-    #buildIcon(color, selected) {
-        const size = 8;
+    // t = ripple progress 0..1, only used when selected
+    #buildIcon(color, selected, t = 0) {
+        const size   = 8;
+        const dotR   = size / 2;
+        // canvas grows when selected so the expanding ring isn't clipped
+        const canvas = selected ? size * 4 : size * 2;
+        const c      = canvas / 2;
+
         const strokeColor = selected ? '#444' : '#000';
         const strokeWidth = selected ? 2 : 1;
 
+        let ripple = '';
+        if (selected) {
+            const maxR    = canvas / 2 - 2;
+            const eased   = 1 - Math.pow(1 - t, 2);      // fast out, slow finish
+            const r       = dotR + (maxR - dotR) * eased;
+            const opacity = (1 - t) * 0.6;
+            ripple = `<circle cx="${c}" cy="${c}" r="${r.toFixed(2)}" fill="none"
+                              stroke="#444" stroke-width="2" opacity="${opacity.toFixed(3)}"/>`;
+        }
+
         const svg = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="${size * 3}" height="${size * 3}" viewBox="0 0 ${size * 3} ${size * 3}">
-                <circle cx="${size * 1.5}" cy="${size * 1.5}" r="${size / 2}" fill="${color}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-                ${selected ? `<circle cx="${size * 1.5}" cy="${size * 1.5}" r="${size}" fill="none" stroke="#444" stroke-width="2" opacity="0.6"/>` : ''}
+            <svg xmlns="http://www.w3.org/2000/svg" width="${canvas}" height="${canvas}" viewBox="0 0 ${canvas} ${canvas}">
+                ${ripple}
+                <circle cx="${c}" cy="${c}" r="${dotR}" fill="${color}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
             </svg>
         `;
 
         return {
             url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
-            anchor: new google.maps.Point(size * 1.5, size * 1.5),
-            scaledSize: new google.maps.Size(size * 3, size * 3),
+            anchor: new google.maps.Point(c, c),
+            scaledSize: new google.maps.Size(canvas, canvas),
         };
     }
 
-    #updateIcon() {
-        this.#marker.setIcon(this.#buildIcon(this.#color, this.#selected));
+    #updateIcon(t = 0) {
+        this.#marker?.setIcon(this.#buildIcon(this.#color, this.#selected, t));
     }
 
-    getId() {
-        return this.#id;
+    #startPulse() {
+        if (this.#rafId !== null) return;
+        this.#pulseStart = performance.now();
+        this.#lastDraw = 0;
+
+        const step = (now) => {
+            if (!this.#marker || !this.#selected) return;
+
+            if (now - this.#lastDraw >= 1000 / PULSE_FPS) {
+                this.#lastDraw = now;
+                const t = ((now - this.#pulseStart) % PULSE_PERIOD) / PULSE_PERIOD;
+                this.#updateIcon(t);
+            }
+            this.#rafId = requestAnimationFrame(step);
+        };
+
+        this.#rafId = requestAnimationFrame(step);
     }
+
+    #stopPulse() {
+        if (this.#rafId === null) return;
+        cancelAnimationFrame(this.#rafId);
+        this.#rafId = null;
+    }
+
+    getId() { return this.#id; }
 
     setPosition(position) { this.#marker.setPosition(position); }
 
@@ -59,20 +105,30 @@ class Marker {
     setZIndex(z) { this.#marker.setZIndex(z); }
 
     setSelected(selected) {
+        if (this.#selected === selected) return;
         this.#selected = selected;
-        this.#updateIcon();
+
+        if (selected) {
+            this.#startPulse();
+        } else {
+            this.#stopPulse();
+            this.#updateIcon();
+        }
     }
 
     setColor(color) {
         this.#color = color;
-        this.#updateIcon();
+        if (!this.#selected) this.#updateIcon();
     }
 
     setVisible(visible) {
         this.#marker.setMap(visible ? this.#map : null);
+        if (!visible) this.#stopPulse();
+        else if (this.#selected) this.#startPulse();
     }
 
     destroy() {
+        this.#stopPulse();
         google.maps.event.removeListener(this.#onClick);
         this.#onClick = null;
         this.#marker.setMap(null);
