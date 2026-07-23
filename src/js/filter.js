@@ -12,7 +12,8 @@ const filters = {
     // firmware_version: { label: 'Firmware',       type: 'includes', options: ['Show All', '0.6', '0.86', '0.88', '0.89', '0.90', '1.00', '1.01', '6.1'] },
     no_packet_days:   { label: 'No Packet Days', type: 'range',    options: ['Show All', '< 7', '7 - 14', '> 14'] },
     voltage:      { label: 'Voltage',        type: 'range',            options: ['Show All', '< 11.76', '11.76 - 12.07', '12.07 - 12.41', '12.41 - 12.64', '> 12.64'] },
-    tools:            { label: 'Tools',          type: 'includes', options: ['Show All', 'Ticket', 'Public Note'] },
+    // tools:            { label: 'Tools',          type: 'includes', options: ['Show All', 'Ticket', 'Public Note'] },
+    tools:            { label: 'Tools',          type: 'includes', options: ['Show All', 'Ticket'] },
 };
 
 function renderFilters(filters) {
@@ -167,7 +168,7 @@ function matchesRange(value, rangeStr) {
 function matchesToolFilter(data, selectedTools) {
     for (const tool of selectedTools) {
         if (tool === 'Ticket' && data.tickets && data.tickets.length > 0) return true;
-        if (tool === 'Public Note' && data.public_note != null) return true;
+        // if (tool === 'Public Note' && data.public_note != null) return true;
     }
     return false;
 }
