@@ -24,11 +24,11 @@ export const colorByConfig = {
         colors: ['#00aa22', '#577018', '#725e15', '#b5320d', '#fe0104'],
         ticks: ['', '10', '11', '12', '13', ''].reverse()
     },
-    firmware_version: {
-        title: 'Firmware',
-        colors: ['#047857', '#059669', '#10B981', '#34D399', '#6EE7B7', '#1E3A8A', '#2563EB', '#3B82F6'].reverse(),
-        ticks: ['0.6', '0.86', '0.88', '0.89', '0.9', '1.00', '1.01', '6.1', ''].reverse(),
-    },
+    // firmware_version: {
+    //     title: 'Firmware',
+    //     colors: ['#047857', '#059669', '#10B981', '#34D399', '#6EE7B7', '#1E3A8A', '#2563EB', '#3B82F6'].reverse(),
+    //     ticks: ['0.6', '0.86', '0.88', '0.89', '0.9', '1.00', '1.01', '6.1', ''].reverse(),
+    // },
     no_packet_days: {
         title: 'Packets',
         colors: ['#00FF00', '#FF9F1C', '#FF0000'].reverse(),
