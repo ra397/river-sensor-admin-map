@@ -134,4 +134,10 @@ export class Markers {
         for (const m of this.#markers) m.destroy();
         this.#markers = [];
     }
+
+    getBoundingBox() {
+        const bounds = new google.maps.LatLngBounds();
+        this.#markers.forEach(m => bounds.extend(m.getPosition()));
+        return bounds;
+    }
 }

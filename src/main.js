@@ -63,6 +63,7 @@ function initMarkers() {
             color: 'green',
         });
     });
+    map.setCenter(markers.getBoundingBox().getCenter());
 }
 
 async function loadObservatories() {
