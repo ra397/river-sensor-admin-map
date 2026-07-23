@@ -21,8 +21,8 @@ checkboxes.forEach(cb => {
 export const colorByConfig = {
     voltage: {
         title: 'Voltage',
-        colors: ['#00aa22', '#577018', '#725e15', '#b5320d', '#fe0104'],
-        ticks: ['', '10', '11', '12', '13', ''].reverse()
+        colors: ['#70bb3e', '#a9d08e', '#fed86d', '#fe0104', '#b5320d'],
+        ticks: ['', '11.76', '12.07', '12.41', '12.64', ''].reverse()
     },
     // firmware_version: {
     //     title: 'Firmware',
