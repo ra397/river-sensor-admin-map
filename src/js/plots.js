@@ -14,8 +14,9 @@ function hidePlotly() {
     plotlyContainerEl.classList.add('hidden');
 }
 
-function getDateRange(yearsBack = 1) {
+function getDateRange(yearsBack = 1, extraDaysEnd = 0) {
     const endDate = new Date();
+    endDate.setDate(endDate.getDate() + extraDaysEnd);
     const startDate = new Date();
     startDate.setFullYear(startDate.getFullYear() - yearsBack);
 
@@ -82,7 +83,7 @@ async function renderActivePlot() {
     const yearsBack = config.yearsBack ?? 1;
     const plotYearsBack = config.plotYearsBack ?? yearsBack;
     const { startDate, endDate } = getDateRange(yearsBack);
-    const plotRangeDates = getDateRange(plotYearsBack);
+    const plotRangeDates = getDateRange(plotYearsBack, 7);
 
     const data = config.yearsApi
         ? await getBatteryReportData(currentObservatoryId, yearsBack)
