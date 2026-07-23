@@ -56,6 +56,7 @@ const PLOT_CONFIG = {
         traces: [
             { key: 'primary', xKey: 'validtime', name: 'Primary', mode: 'markers', type: 'scattergl', color: 'blue' }
         ],
+        yTickFormat: 'd',
     },
     'moisture': {
         title: 'Moisture',
@@ -137,7 +138,7 @@ function buildTraces(config, data) {
 function buildLayout(config, range) {
     const now = new Date();
     return {
-        margin: { l: 35, r: 25, b: 25, t: 25, pad: 4 },
+        margin: { l: 45, r: 25, b: 25, t: 25, pad: 4 },
         shapes: [{
             type: 'line',
             x0: now, x1: now,
@@ -157,6 +158,7 @@ function buildLayout(config, range) {
             title: config.yaxis,
             showline: true,
             linecolor: 'black',
+            tickformat: config.yTickFormat,
         },
         legend: {
             x: 0.01, y: 0.99,
