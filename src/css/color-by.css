@@ -10,11 +10,15 @@
 .icon-group-item {
     background: #fff;
     padding: 0.5ch;
-    border: 2px solid transparent;
-    transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+    outline: 2px solid transparent;
+    transition: outline-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
 
     height: 35px;
     cursor: pointer;
+
+    box-shadow:
+            0 1px 3px 0 rgba(60, 64, 67, 0.3),
+            0 4px 8px 3px rgba(60, 64, 67, 0.15);
 }
 
 .icon-group-item:hover {
@@ -31,7 +35,7 @@
 }
 
 .icon-group-item:has(input[type="checkbox"]:checked) {
-    border-color: var(--light-blue);
+    outline-color: var(--light-blue);
     background: #e8f1ff;
     box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.2);
 }

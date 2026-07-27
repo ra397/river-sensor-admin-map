@@ -54,7 +54,7 @@ const PLOT_CONFIG = {
         title: 'Measurements',
         yaxis: 'Value',
         traces: [
-            { key: 'primary', xKey: 'validtime', name: 'Primary', mode: 'markers', type: 'scattergl', color: 'blue' }
+            { key: 'primary', xKey: 'validtime', name: 'Primary', mode: 'markers', type: 'scattergl', color: 'blue', flagKey: 'flag' }
         ],
         yTickFormat: 'd',
     },
@@ -125,14 +125,24 @@ function buildPlotlyToggles() {
 }
 
 function buildTraces(config, data) {
-    return config.traces.map(t => ({
-        x: data.map(d => d[t.xKey]),
-        y: data.map(d => d[t.key]),
-        type: 'scatter',
-        mode: t.mode,
-        name: t.name,
-        line: { color: t.color, ...(t.dash && { dash: t.dash }) }
-    }));
+    return config.traces.map(t => {
+        const trace = {
+            x: data.map(d => d[t.xKey]),
+            y: data.map(d => d[t.key]),
+            type: 'scatter',
+            mode: t.mode,
+            name: t.name,
+            line: { color: t.color, ...(t.dash && { dash: t.dash }) }
+        };
+
+        if (t.flagKey) {
+            trace.marker = {
+                color: data.map(d => d[t.flagKey] === false ? 'red' : 'blue')
+            };
+        }
+
+        return trace;
+    });
 }
 
 function buildLayout(config, range) {

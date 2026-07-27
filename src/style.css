@@ -16,8 +16,10 @@
     --black: #000;
     --light-blue: rgb(13, 110, 253);
     --light-gray: #ccc;
+    --lighter-gray: #f0f0f0;
     --dark-gray: #dddddd4a;
     --red: #dc3545;
+    --border-color: #a0a0a0;
     --line-height: 1.6rem;
 }
 
@@ -29,6 +31,7 @@ body {
     display: flex;
     flex-direction: column;
     line-height: var(--line-height);
+    overflow: hidden;
 }
 
 #main-view {

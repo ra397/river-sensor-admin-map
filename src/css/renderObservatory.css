@@ -11,22 +11,29 @@
     padding: 0.5em;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 
-    width: 300px;
+    width: fit-content;
     height: fit-content;
+
+    outline: 1px solid var(--border-color);
 }
 
 .observatory-row-container {
     display: flex;
-    gap: 1ch;
 }
 
 .observatory-row-container > .observatory-label {
     font-size: 0.85em;
+    width: fit-content;
     min-width: 14ch;
-    max-width: 20ch;
     opacity: 0.7;
+    text-indent: 1.5ch;
 }
 
 .observatory-row-container > .observatory-value {
-    max-width: 20ch;
+    max-width: fit-content;
+    min-width: 20ch;
+}
+
+.observatory-row-container > button {
+    margin: 0.25em;
 }

@@ -10,6 +10,13 @@
 
     overflow: hidden;
     transition: flex-basis 0.2s ease, padding 0.2s ease, opacity 0.2s ease;
+
+    width: fit-content;
+    height: 100vh;
+
+    box-shadow:
+            0 1px 3px 0 rgba(60, 64, 67, 0.3),
+            0 4px 8px 3px rgba(60, 64, 67, 0.15);
 }
 
 #sidebar.collapsed {
@@ -51,13 +58,6 @@
     flex-direction: column;
     gap: 1em;
     overflow: hidden;
-}
-
-.sidebar-heading {
-    font-size: 1.1em;
-    border-bottom: 1px solid var(--light-gray);
-    margin-bottom: 1em;
-    margin-right: 1em;
 }
 
 .sidebar-section {

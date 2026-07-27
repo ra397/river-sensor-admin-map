@@ -20,7 +20,7 @@ const FIELD_LABELS = [
     { key: 'orientation', label: 'Orientation' },
     { key: 'updown', label: 'Up/Down' },
     { key: 'latest_observation', label: 'Latest Observation' },
-    { key: 'no_packet_days', label: 'Days Without Packet' },
+    { key: 'no_packet_days', label: 'Days Offline' },
     { key: 'cooperator', label: 'Cooperator' },
     // { key: 'public_note', label: 'Public Note' },
 ];

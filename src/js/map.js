@@ -11,7 +11,7 @@ const mapEl = document.getElementById('map');
 const mapMenus = Array.from(mapEl.children); // take snapshot before Google Maps API wipes #map container
 
 export const map = new google.maps.Map(mapEl, {
-    zoom: 8,
+    zoom: 7,
     minZoom: 5,
     maxZoom: 18,
     clickableIcons: false,
