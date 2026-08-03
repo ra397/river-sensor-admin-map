@@ -1,4 +1,6 @@
-const { StreetViewService } = await google.maps.importLibrary('streetView');
+// js/panorama.js
+import { libraries } from './mapLoader.js';
+const { StreetViewService } = libraries.streetView;
 
 const panoContainer = document.getElementById('pano-container');
 const panoDiv = document.getElementById('pano');

@@ -9,7 +9,8 @@ import { renderObservatoryInfoWindow } from "./js/renderObservatory.js";
 import { updateReports } from "./js/plots.js";
 import { showStreetView } from "./js/panorama.js";
 import { makeDraggable } from "./js/draggableContainer.js";
-import { renderTickets } from "./js/renderTickets.js";
+import { renderManageTickets } from "./js/renderManageTickets.js";
+import { renderNotifications } from "./js/renderNotifications.js";
 import { initMapStyleControl } from "./js/mapStyles.js";
 
 const renderObservatoryContainerEl = document.querySelector("#renderObservatoryContainer");
@@ -36,18 +37,23 @@ async function handleMarkerClick(marker) {
         await showStreetView(marker.getPosition());
     }
 
-    const viewTicketsEl = document.querySelector('#viewTickets');
-    if (!viewTicketsEl.classList.contains('hidden')) {
-        if (observatory?.tickets?.length > 0) {
-            await renderTickets(viewTicketsEl, observatory);
+    // The manage panels are scoped to one bridge, follow the selected marker
+    const manageTicketsEl = document.querySelector('#manageTickets');
+    if (!manageTicketsEl.classList.contains('hidden')) {
+        if (observatory) {
+            await renderManageTickets(manageTicketsEl, observatory);
         } else {
-            viewTicketsEl.classList.add('hidden');
+            manageTicketsEl.classList.add('hidden');
         }
     }
 
-    const editTicketEl = document.querySelector('#editTicket');
-    if (!editTicketEl.classList.contains('hidden')) {
-        editTicketEl.classList.add('hidden');
+    const manageNotificationsEl = document.querySelector('#manageNotifications');
+    if (!manageNotificationsEl.classList.contains('hidden')) {
+        if (observatory) {
+            await renderNotifications(manageNotificationsEl, observatory);
+        } else {
+            manageNotificationsEl.classList.add('hidden');
+        }
     }
 }
 

@@ -59,6 +59,26 @@
     "maintenance_crew": {
       "method": "GET",
       "endpoint": "/users/role/maintenance"
+    },
+    "notifications": {
+      "method": "GET",
+      "endpoint": "/notifications"
+    },
+    "notification": {
+      "method": "GET",
+      "endpoint": "/notifications/:id"
+    },
+    "create_notification": {
+      "method": "POST",
+      "endpoint": "/notifications"
+    },
+    "edit_notification": {
+      "method": "PUT",
+      "endpoint": "/notifications/:id"
+    },
+    "delete_notification": {
+      "method": "DELETE",
+      "endpoint": "/notifications/:id"
     }
   }
 }

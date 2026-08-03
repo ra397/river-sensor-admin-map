@@ -3,12 +3,12 @@ input[type="search"] {
     border: 1px solid var(--light-gray);
     border-radius: 4px;
     outline: none;
-    padding: 0.5ch 1ch 0.5ch 3.5ch;
-    line-height: 1.6rem;
+    padding: 0 1ch 0 3.5ch;
+    line-height: 2rem;
     font-size: 1rem;
     background-image: url(../assets/icons/search.svg);
     background-size: 1.5rem;
-    background-position: left 0.75ch top 0.35rem;
+    background-position: left 0.75ch top 0.3rem;
     background-repeat: no-repeat;
     background-origin: border-box;
     background-color: #fff;

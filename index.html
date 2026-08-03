@@ -116,15 +116,19 @@
                         </div>
                     </div>
 
-                    <div id="createTicket" class="modal pop-up-container draggable hidden">
+                    <div id="manageTickets" class="modal pop-up-container draggable hidden">
                         <div class="modal-header">
-                            <span class="modal-title">Create Ticket</span>
+                            <span class="modal-title">Manage Tickets</span>
                             <span class="close-button">X</span>
                         </div>
                         <div class="modal-body">
                             <div class="modal-row">
-                                <label class="modal-label">Bridge<input name="observatory" class="modal-input" type="text"></label>
+                                <label class="modal-label">Bridge<input name="observatory" class="modal-input" type="text" readonly></label>
                             </div>
+
+                            <div class="manage-list"></div>
+
+                            <div class="manage-form-title"></div>
                             <div class="modal-row">
                                 <label class="modal-label">Problem<textarea name="problem" class="modal-input"></textarea></label>
                             </div>
@@ -137,6 +141,9 @@
                             <div class="modal-row">
                                 <label class="modal-label">Notes <input name="notes" class="modal-input" type="text"></label>
                             </div>
+
+                            <div class="manage-message hidden"></div>
+
                             <div class="modal-actions">
                                 <!-- Existing buttons (visible when NOT confirming) -->
                                 <button class="secondary reset-btn">Reset</button>
@@ -149,40 +156,37 @@
                         </div>
                     </div>
 
-                    <div id="viewTickets" class="pop-up-container draggable hidden">
-                        <span class="close-button">✕</span>
-                    </div>
-
-                    <div id="editTicket" class="pop-up-container modal draggable hidden">
+                    <div id="manageNotifications" class="modal pop-up-container draggable hidden">
                         <div class="modal-header">
-                            <span class="modal-title">Edit Ticket</span>
+                            <span class="modal-title">Manage Notifications</span>
                             <span class="close-button">X</span>
                         </div>
                         <div class="modal-body">
                             <div class="modal-row">
-                                <label class="modal-label">Bridge<input name="observatory" class="modal-input" type="text"></label>
+                                <label class="modal-label">Bridge<input name="observatory" class="modal-input" type="text" readonly></label>
                             </div>
-                            <div class="modal-row">
-                                <label class="modal-label">Problem<textarea name="problem" class="modal-input"></textarea></label>
-                            </div>
-                            <div class="modal-row">
-                                <label class="modal-label">Assigned to
-                                    <select name="assignee" class="modal-input" data-prefill="maintenanceCrew"></select>
-                                </label>
-                                <label class="modal-label">Status <select name="status" class="modal-input" data-mode="edit" data-prefill="ticketStatus"><option value="assigned">assigned</option><option value="suspended">suspended</option><option value="done">done</option></select></label>
-                            </div>
-                            <div class="modal-row">
-                                <label class="modal-label">Notes <input name="notes" class="modal-input" type="text"></label>
-                            </div>
-                        </div>
-                        <div class="modal-actions">
-                            <!-- Existing buttons (visible when NOT confirming) -->
-                            <button class="secondary reset-btn">Reset</button>
-                            <button class="primary submit-btn" disabled="">Save</button>
 
-                            <!-- Confirm buttons (visible only when confirming) -->
-                            <button class="secondary cancel-btn">Cancel</button>
-                            <button class="primary approve-btn">Approve</button>
+                            <div class="manage-list"></div>
+
+                            <div class="manage-form-title"></div>
+                            <div class="modal-row">
+                                <label class="modal-label">Threshold (cm)<input name="threshold" class="modal-input" type="number" step="0.01" placeholder="e.g. 245.50"></label>
+                                <label class="modal-label">Repeat At Most Every
+                                    <select name="buffer_hours" class="modal-input"></select>
+                                </label>
+                            </div>
+
+                            <div class="manage-message hidden"></div>
+
+                            <div class="modal-actions">
+                                <!-- Existing buttons (visible when NOT confirming) -->
+                                <button class="secondary reset-btn">Reset</button>
+                                <button class="primary submit-btn" disabled="">Save</button>
+
+                                <!-- Confirm buttons (visible only when confirming) -->
+                                <button class="secondary cancel-btn">Cancel</button>
+                                <button class="primary approve-btn">Approve</button>
+                            </div>
                         </div>
                     </div>
                 </div>

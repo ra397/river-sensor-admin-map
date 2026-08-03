@@ -1,7 +1,7 @@
-import { renderTickets } from "./renderTickets.js";
 import {isAuthenticated} from "./auth.js";
 import {showForm} from "./authUI.js";
-import {renderCreateTicket} from "./renderCreateTicket.js";
+import {renderManageTickets} from "./renderManageTickets.js";
+import {renderNotifications} from "./renderNotifications.js";
 
 const FIELD_LABELS = [
     { key: 'name', label: 'Name' },
@@ -71,27 +71,25 @@ export async function renderObservatoryInfoWindow(container, observatory, authRe
     const btnContainer = document.createElement('div');
     btnContainer.classList.add('observatory-row-container');
 
-    if (observatory.tickets.length > 0) {
-        const viewTicketBtn = document.createElement('button');
-        viewTicketBtn.textContent = "View Tickets";
-        viewTicketBtn.classList.add('secondary');
+    const manageNotificationsBtn = document.createElement('button');
+    manageNotificationsBtn.textContent = "Manage Notifications";
+    manageNotificationsBtn.classList.add('secondary');
 
-        viewTicketBtn.addEventListener('click', () => {
-            renderTickets(document.getElementById("viewTickets"), observatory);
-        })
-
-        btnContainer.appendChild(viewTicketBtn);
-    }
-
-    const createTicketBtn = document.createElement('button');
-    createTicketBtn.textContent = "Create Ticket";
-    createTicketBtn.classList.add('primary');
-
-    createTicketBtn.addEventListener('click', () => {
-        renderCreateTicket(document.getElementById("createTicket"), observatory);
+    manageNotificationsBtn.addEventListener('click', () => {
+        renderNotifications(document.getElementById("manageNotifications"), observatory);
     })
 
-    btnContainer.appendChild(createTicketBtn);
+    btnContainer.appendChild(manageNotificationsBtn);
+
+    const manageTicketsBtn = document.createElement('button');
+    manageTicketsBtn.textContent = "Manage Tickets";
+    manageTicketsBtn.classList.add('primary');
+
+    manageTicketsBtn.addEventListener('click', () => {
+        renderManageTickets(document.getElementById("manageTickets"), observatory);
+    })
+
+    btnContainer.appendChild(manageTicketsBtn);
 
     container.appendChild(btnContainer);
 

@@ -57,6 +57,36 @@ export async function request(name, { pathParams = {}, queryParams = {}, body = 
     return response.json();
 }
 
+export class ApiError extends Error {
+    constructor(message, { code = null, httpCode = null } = {}) {
+        super(message);
+        this.name = 'ApiError';
+        this.code = code;        // application error code (110, 111, 112, 113)
+        this.httpCode = httpCode; // logical http code carried inside the envelope
+    }
+}
+
+// The notification endpoints always answer HTTP 200 and carry the real outcome
+// in the body as [payload, code]. Never treat HTTP 200 as success here.
+async function envelopeRequest(name, options = {}) {
+    const response = await request(name, options);
+
+    if (!Array.isArray(response) || response.length !== 2) {
+        throw new ApiError('Unexpected response from the server.');
+    }
+
+    const [payload, code] = response;
+
+    if (code !== 200) {
+        throw new ApiError(payload?.message || 'The request could not be completed.', {
+            code: payload?.code ?? null,
+            httpCode: code,
+        });
+    }
+
+    return payload;
+}
+
 export async function getObservatoryData() {
     const [observatories, sensors, latestObs, voltages, noPacketDays, tickets] = await Promise.all([
         request('observatories'),
@@ -110,6 +140,13 @@ export async function getBatteryReportData(observatoryId, years) {
     });
 }
 
+export async function getTickets(observatoryName) {
+    const tickets = await request('active_tickets');
+    return tickets
+        .filter(t => t.observatory === observatoryName)
+        .map(({ observatory, sensor_id, ...rest }) => rest);
+}
+
 export async function createTicket(data) {
     return request('create_ticket', { body: data });
 }
@@ -118,8 +155,27 @@ export async function editTicket(id, data) {
     return request('edit_ticket', { pathParams: { id }, body: data });
 }
 
+export async function getNotifications() {
+    return envelopeRequest('notifications');
+}
+
+export async function getNotification(id) {
+    return envelopeRequest('notification', { pathParams: { id } });
+}
+
+export async function createNotification(data) {
+    return envelopeRequest('create_notification', { body: data });
+}
+
+export async function editNotification(id, data) {
+    return envelopeRequest('edit_notification', { pathParams: { id }, body: data });
+}
+
+export async function deleteNotification(id) {
+    return envelopeRequest('delete_notification', { pathParams: { id } });
+}
+
 export async function getMaintenanceCrew() {
     const crew = await request('maintenance_crew');
     return crew.map(item => item.fullname);
 }
-globalThis.getMaintenanceCrew = getMaintenanceCrew;

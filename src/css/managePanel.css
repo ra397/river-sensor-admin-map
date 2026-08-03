@@ -1,0 +1,97 @@
+.manage-list {
+    margin-bottom: 0.75em;
+}
+
+.manage-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+
+    user-select: none;
+}
+
+.manage-table th,
+.manage-table td {
+    padding: 0.5em 0.75em;
+    text-align: left;
+}
+
+.manage-table th {
+    border-bottom: 1px solid var(--light-gray);
+    font-weight: 600;
+    opacity: 0.7;
+    font-size: 0.85em;
+}
+
+.manage-table td {
+    border-bottom: 1px solid var(--dark-gray);
+}
+
+.manage-table tbody tr:hover {
+    background: var(--dark-gray);
+    cursor: pointer;
+}
+
+.manage-table tbody tr.selected {
+    background: var(--dark-gray);
+    outline: 1px solid var(--light-blue);
+}
+
+.manage-table .row-actions {
+    width: 1%;
+    text-align: right;
+}
+
+.manage-table .delete-btn {
+    width: auto;
+    margin: 0;
+    padding: 0 0.6em;
+    background: white;
+    outline: 1px solid var(--red);
+    color: var(--red);
+    font-size: 0.9em;
+}
+
+.manage-empty {
+    font-size: 0.9em;
+    opacity: 0.7;
+    padding: 0.5em 0.75em;
+    border-bottom: 1px solid var(--dark-gray);
+}
+
+.manage-form-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 0.9em;
+    font-weight: 600;
+    opacity: 0.7;
+    margin-bottom: 0.5em;
+}
+
+.manage-new-link {
+    font-weight: 400;
+    color: var(--light-blue);
+    cursor: pointer;
+    user-select: none;
+}
+
+.manage-new-link:hover {
+    text-decoration: underline;
+}
+
+.manage-message {
+    font-size: 0.85em;
+    padding: 0.5em 0.75em;
+    margin-bottom: 0.75em;
+    border-radius: 4px;
+    background: var(--lighter-gray);
+}
+
+.manage-message.error {
+    color: var(--red);
+}
+
+.manage-message.confirm {
+    text-align: center;
+}
