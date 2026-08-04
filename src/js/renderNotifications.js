@@ -164,6 +164,14 @@ export async function renderNotifications(container, observatory, authRequired =
         }
     }
 
+    // Lets the measurements plot arm threshold picking and highlight the line
+    // belonging to the registration being edited
+    function announcePanel(open = true) {
+        window.dispatchEvent(new CustomEvent('notifications:panel', {
+            detail: { open, oid: observatory.oid, editingId: editing?.notification_id ?? null }
+        }));
+    }
+
     function startCreate() {
         editing = null;
         thresholdEl.value = '';
@@ -171,6 +179,7 @@ export async function renderNotifications(container, observatory, authRequired =
         renderFormTitle();
         renderList();
         checkForChanges();
+        announcePanel();
     }
 
     function startEdit(registration) {
@@ -180,6 +189,7 @@ export async function renderNotifications(container, observatory, authRequired =
         renderFormTitle();
         renderList();
         checkForChanges();
+        announcePanel();
     }
 
     async function refreshList() {
@@ -191,6 +201,7 @@ export async function renderNotifications(container, observatory, authRequired =
         }
         renderFormTitle();
         renderList();
+        announcePanel();
     }
 
     function getFormValues() {
@@ -279,6 +290,7 @@ export async function renderNotifications(container, observatory, authRequired =
                 await refreshList();
                 startCreate();
                 setMessage('Notification deleted.', 'info');
+                window.dispatchEvent(new CustomEvent('update:notifications'));
                 return;
             }
 
@@ -320,6 +332,7 @@ export async function renderNotifications(container, observatory, authRequired =
                     : 'Saved.',
                 'info'
             );
+            window.dispatchEvent(new CustomEvent('update:notifications'));
         } catch (err) {
             await handleError(err);
         }
@@ -358,6 +371,18 @@ export async function renderNotifications(container, observatory, authRequired =
         setMessage('');
     }
 
+    // Picking a threshold off the measurements plot fills the field, saving it
+    // still goes through the usual confirm step
+    function handlePlotClick(e) {
+        const { observatoryId, y } = e.detail;
+        if (observatoryId !== observatory.oid) return;
+        if (container.classList.contains('confirming')) return;
+        if (Math.abs(y) > MAX_THRESHOLD) return;
+
+        thresholdEl.value = toCentimeters(y);
+        checkForChanges();
+    }
+
     function handleClose() {
         exitConfirm(container);
         cleanup();
@@ -374,8 +399,14 @@ export async function renderNotifications(container, observatory, authRequired =
         onInputChange: checkForChanges
     });
 
-    cleanup = cleanupFn;
-    activeCleanup = cleanupFn;
+    window.addEventListener('plot:click', handlePlotClick);
+
+    cleanup = () => {
+        cleanupFn();
+        window.removeEventListener('plot:click', handlePlotClick);
+        announcePanel(false);
+    };
+    activeCleanup = cleanup;
 
     startCreate();
     setMessage('');

@@ -1,10 +1,18 @@
 import Plotly from 'plotly.js-dist-min';
-import { getBatteryReportData, getReportData } from './api.js';
+import { getBatteryReportData, getReportData, getNotifications } from './api.js';
+import { isAuthenticated } from './auth.js';
 
 const plotlyContainerEl = document.querySelector('#plot-container');
 
+const THRESHOLD_LINE_COLOR = '#7f8c8d';
+const THRESHOLD_HIGHLIGHT_COLOR = '#e67e22';
+
 let currentObservatoryId = null;
 let activePlot = 'packet-count'; // default
+
+let thresholds = [];              // this user's notification thresholds for the site
+let highlightedThresholdId = null; // the registration open in the notifications panel
+let pickingArmed = false;          // true while the notifications panel is open
 
 export function showPlotly() {
     plotlyContainerEl.classList.remove('hidden');
@@ -52,11 +60,12 @@ const PLOT_CONFIG = {
     },
     'measurements': {
         title: 'Measurements',
-        yaxis: 'Value',
+        yaxis: 'Value (cm)',
         traces: [
             { key: 'primary', xKey: 'validtime', name: 'Primary', mode: 'markers', type: 'scattergl', color: 'blue', flagKey: 'flag' }
         ],
         yTickFormat: 'd',
+        showThresholds: true, // measurements share the notification threshold units (cm)
     },
     'moisture': {
         title: 'Moisture',
@@ -90,10 +99,12 @@ async function renderActivePlot() {
         ? await getBatteryReportData(currentObservatoryId, yearsBack)
         : await getReportData(activePlot, currentObservatoryId, startDate, endDate);
 
-    Plotly.newPlot(activePlot, buildTraces(config, data), buildLayout(config, [toDateStr(plotRangeDates.startDate), toDateStr(plotRangeDates.endDate)]), {
+    await Plotly.newPlot(activePlot, buildTraces(config, data), buildLayout(config, [toDateStr(plotRangeDates.startDate), toDateStr(plotRangeDates.endDate)]), {
         displayModeBar: false,
         responsive: true,
     });
+
+    attachThresholdPicker(div);
 }
 
 function buildPlotlyToggles() {
@@ -145,17 +156,61 @@ function buildTraces(config, data) {
     });
 }
 
-function buildLayout(config, range) {
+function buildShapes(config) {
     const now = new Date();
+    const shapes = [{
+        type: 'line',
+        x0: now, x1: now,
+        y0: 0, y1: 1,
+        yref: 'paper',
+        line: { color: 'red', width: 2 }
+    }];
+
+    if (!config.showThresholds) return shapes;
+
+    thresholds.forEach(threshold => {
+        const highlighted = threshold.notification_id === highlightedThresholdId;
+        shapes.push({
+            type: 'line',
+            x0: 0, x1: 1,
+            xref: 'paper',
+            y0: Number(threshold.threshold), y1: Number(threshold.threshold),
+            line: {
+                color: highlighted ? THRESHOLD_HIGHLIGHT_COLOR : THRESHOLD_LINE_COLOR,
+                width: highlighted ? 3 : 1.5,
+                dash: highlighted ? 'solid' : 'dash',
+            }
+        });
+    });
+
+    return shapes;
+}
+
+function buildAnnotations(config) {
+    if (!config.showThresholds) return [];
+
+    return thresholds.map(threshold => {
+        const highlighted = threshold.notification_id === highlightedThresholdId;
+        return {
+            x: 1, xref: 'paper', xanchor: 'right',
+            y: Number(threshold.threshold), yref: 'y', yanchor: 'bottom',
+            text: `${Number(threshold.threshold).toFixed(2)} cm`,
+            showarrow: false,
+            font: {
+                size: 9,
+                color: highlighted ? 'white' : THRESHOLD_LINE_COLOR,
+            },
+            bgcolor: highlighted ? THRESHOLD_HIGHLIGHT_COLOR : 'rgba(255, 255, 255, 0.7)',
+            borderpad: 2,
+        };
+    });
+}
+
+function buildLayout(config, range) {
     return {
         margin: { l: 45, r: 25, b: 25, t: 25, pad: 4 },
-        shapes: [{
-            type: 'line',
-            x0: now, x1: now,
-            y0: 0, y1: 1,
-            yref: 'paper',
-            line: { color: 'red', width: 2 }
-        }],
+        shapes: buildShapes(config),
+        annotations: buildAnnotations(config),
         title: config.title,
         xaxis: {
             title: 'Date',
@@ -177,8 +232,75 @@ function buildLayout(config, range) {
     };
 }
 
+async function loadThresholds() {
+    if (!currentObservatoryId || !isAuthenticated()) {
+        thresholds = [];
+        return;
+    }
+
+    try {
+        const registrations = await getNotifications();
+        thresholds = registrations.filter(r => r.oid === currentObservatoryId);
+    } catch (err) {
+        // The plot stays usable without the threshold lines
+        console.error(err);
+        thresholds = [];
+    }
+}
+
+// Redraws the threshold lines in place, without refetching the report data
+function redrawThresholds() {
+    const config = PLOT_CONFIG[activePlot];
+    const gd = document.getElementById(activePlot);
+    if (!gd?.data || !config) return;
+
+    Plotly.relayout(gd, {
+        shapes: buildShapes(config),
+        annotations: buildAnnotations(config),
+    });
+}
+
+// Plotly only reports clicks that land on a data point, so convert the click
+// position through the y-axis to support picking anywhere in the plot area
+function clickToYValue(gd, event) {
+    const yaxis = gd._fullLayout?.yaxis;
+    if (typeof yaxis?.p2d !== 'function') return null;
+
+    const offsetY = event.clientY - gd.getBoundingClientRect().top - yaxis._offset;
+    if (offsetY < 0 || offsetY > yaxis._length) return null;
+
+    const value = yaxis.p2d(offsetY);
+    return Number.isFinite(value) ? Math.round(value * 100) / 100 : null;
+}
+
+function attachThresholdPicker(gd) {
+    let pressedAt = null;
+
+    gd.addEventListener('pointerdown', (event) => {
+        pressedAt = { x: event.clientX, y: event.clientY };
+    });
+
+    gd.addEventListener('click', (event) => {
+        if (!pickingArmed || !PLOT_CONFIG[activePlot]?.showThresholds) return;
+
+        // A drag is a zoom, not a pick
+        const travel = pressedAt
+            ? Math.hypot(event.clientX - pressedAt.x, event.clientY - pressedAt.y)
+            : 0;
+        if (travel > 4) return;
+
+        const y = clickToYValue(gd, event);
+        if (y === null) return;
+
+        window.dispatchEvent(new CustomEvent('plot:click', {
+            detail: { variable: activePlot, observatoryId: currentObservatoryId, y }
+        }));
+    });
+}
+
 export async function updateReports(observatoryId) {
     currentObservatoryId = observatoryId;
+    await loadThresholds();
     await renderActivePlot();
     showPlotly();
 }
@@ -187,6 +309,25 @@ function toDateStr(n) {
     const s = String(n);
     return `${s.slice(0,4)}-${s.slice(4,6)}-${s.slice(6,8)}`;
 }
+
+// The notifications panel arms threshold picking and tells us which
+// registration it is editing so that line can be highlighted
+window.addEventListener('notifications:panel', async (e) => {
+    const { open, editingId = null } = e.detail;
+    const opening = open && !pickingArmed;
+
+    pickingArmed = open;
+    highlightedThresholdId = open ? editingId : null;
+
+    // Opening the panel implies a login, so the thresholds may only be readable now
+    if (opening) await loadThresholds();
+    redrawThresholds();
+});
+
+window.addEventListener('update:notifications', async () => {
+    await loadThresholds();
+    redrawThresholds();
+});
 
 buildPlotlyToggles();
 hidePlotly();

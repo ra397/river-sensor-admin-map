@@ -72,7 +72,7 @@ export async function renderObservatoryInfoWindow(container, observatory, authRe
     btnContainer.classList.add('observatory-row-container');
 
     const manageNotificationsBtn = document.createElement('button');
-    manageNotificationsBtn.textContent = "Manage Notifications";
+    manageNotificationsBtn.textContent = "Notifications";
     manageNotificationsBtn.classList.add('secondary');
 
     manageNotificationsBtn.addEventListener('click', () => {
@@ -82,7 +82,7 @@ export async function renderObservatoryInfoWindow(container, observatory, authRe
     btnContainer.appendChild(manageNotificationsBtn);
 
     const manageTicketsBtn = document.createElement('button');
-    manageTicketsBtn.textContent = "Manage Tickets";
+    manageTicketsBtn.textContent = "Tickets";
     manageTicketsBtn.classList.add('primary');
 
     manageTicketsBtn.addEventListener('click', () => {
