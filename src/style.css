@@ -11,6 +11,7 @@
 @import './css/panorama.css';
 @import './css/draggableContainer.css';
 @import "./css/modal.css";
+@import "./css/toast.css";
 
 :root {
     --black: #000;
@@ -67,7 +68,7 @@ body {
 
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 
-    width: 500px;
+    width: fit-content;
     height: fit-content;
     background: white;
 

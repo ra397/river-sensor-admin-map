@@ -1,4 +1,5 @@
 import { getToken, setToken, clearToken } from './auth.js';
+import { promptLogin } from './authUI.js';
 import { baseUrl, apiConfig } from "./importApiConfig.js";
 
 function buildUrl(endpoint, pathParams = {}, queryParams = {}) {
@@ -12,42 +13,53 @@ function buildUrl(endpoint, pathParams = {}, queryParams = {}) {
     return `${baseUrl}${path}${query ? `?${query}` : ''}`;
 }
 
+function storeRefreshedToken(response) {
+    const newToken = response.headers.get('X-New-Token');
+    if (newToken) {
+        setToken(newToken);
+    }
+}
+
 export async function request(name, { pathParams = {}, queryParams = {}, body = null } = {}) {
     const config = apiConfig['requests'][name];
     if (!config) {
         throw new Error(`Unknown request: ${name}`);
     }
 
-    const headers = {};
-    const token = getToken();
-
-    if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    if (body) {
-        headers['Content-Type'] = 'application/json';
-    }
-
     const url = buildUrl(config.endpoint, pathParams, queryParams);
 
-    const response = await fetch(url, {
-        method: config.method,
-        headers,
-        body: body ? JSON.stringify(body) : null,
-    });
+    // Built per attempt so a replay picks up the token from the fresh login
+    const send = () => {
+        const headers = {};
+        const token = getToken();
 
-    // Handle token refresh
-    const newToken = response.headers.get('X-New-Token');
-    if (newToken) {
-        setToken(newToken);
-    }
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
 
-    // Handle unauthorized - redirect to the login
+        if (body) {
+            headers['Content-Type'] = 'application/json';
+        }
+
+        return fetch(url, {
+            method: config.method,
+            headers,
+            body: body ? JSON.stringify(body) : null,
+        });
+    };
+
+    let response = await send();
+    storeRefreshedToken(response);
+
+    // Handle unauthorized - ask for a login in place, then replay the request
     if (response.status === 401) {
         clearToken();
-        window.location.reload();
-        return;
+        const loggedIn = await promptLogin();
+        if (!loggedIn) {
+            throw new Error('Authentication required');
+        }
+        response = await send();
+        storeRefreshedToken(response);
     }
 
     if (!response.ok) {

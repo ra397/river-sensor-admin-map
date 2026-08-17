@@ -16,6 +16,45 @@ function hideLogin() {
     loginForm.classList.add('hidden');
 }
 
+function hideForgotPassword() {
+    forgotPasswordForm.classList.add('hidden');
+}
+
+function hideNewPassword() {
+    newPasswordForm.classList.add('hidden');
+}
+
+// Cancelling means dismissing the auth flow entirely, from any of its three forms
+function cancelAuth() {
+    window.dispatchEvent(new CustomEvent('auth:cancel'));
+}
+
+let pendingLogin = null;
+
+// Show the login form and settle once the user is done with it: true when they
+// logged in, false when they closed the form. Concurrent callers (e.g. several
+// requests failing with 401 at once) share a single prompt.
+export function promptLogin() {
+    if (pendingLogin) return pendingLogin;
+
+    showForm(loginForm);
+
+    pendingLogin = new Promise(resolve => {
+        const settle = (result) => {
+            window.removeEventListener('auth:login', onLogin);
+            window.removeEventListener('auth:cancel', onCancel);
+            pendingLogin = null;
+            resolve(result);
+        };
+        const onLogin = () => settle(true);
+        const onCancel = () => settle(false);
+        window.addEventListener('auth:login', onLogin);
+        window.addEventListener('auth:cancel', onCancel);
+    });
+
+    return pendingLogin;
+}
+
 // Login form handler
 document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -68,4 +107,17 @@ document.getElementById('reset-password-btn').addEventListener('click', async ()
     } catch {
         alert('Failed to reset password. Please try again.');
     }
+});
+
+loginForm.querySelector('.close-button').addEventListener('click', () => {
+    hideLogin();
+    cancelAuth();
+});
+forgotPasswordForm.querySelector('.close-button').addEventListener('click', () => {
+    hideForgotPassword();
+    cancelAuth();
+});
+newPasswordForm.querySelector('.close-button').addEventListener('click', () => {
+    hideNewPassword();
+    cancelAuth();
 });

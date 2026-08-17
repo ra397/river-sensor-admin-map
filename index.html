@@ -85,7 +85,8 @@
                         <span class="close-button">✕</span>
                     </div>
 
-                    <div id="login-container" class="pop-up-container draggable hidden">
+                    <div id="login-container" class="pop-up-container hidden">
+                        <span class="close-button">X</span>
                         <form id="login-form">
                             <h2>Login</h2>
                             <label for="login-email"></label><input type="email" id="login-email" placeholder="Email" required />
@@ -95,7 +96,8 @@
                         </form>
                     </div>
 
-                    <div id="forgot-password-container" class="pop-up-container draggable hidden">
+                    <div id="forgot-password-container" class="pop-up-container hidden">
+                        <span class="close-button">X</span>
                         <div id="forgot-password-form">
                             <h2>Reset Password</h2>
                             <label for="forgot-email"></label><input type="email" id="forgot-email" placeholder="Email" required />
@@ -104,7 +106,8 @@
                         </div>
                     </div>
 
-                    <div id="new-password-container" class="pop-up-container draggable hidden">
+                    <div id="new-password-container" class="pop-up-container hidden">
+                        <span class="close-button">X</span>
                         <div id="new-password-form">
                             <h2>Reset Password</h2>
                             <label for="reset-email"></label><input type="email" id="reset-email" placeholder="Email" autocomplete="off" required />
@@ -162,9 +165,9 @@
                             <span class="close-button">X</span>
                         </div>
                         <div class="modal-body">
-                            <div class="modal-row">
-                                <label class="modal-label">Bridge<input name="observatory" class="modal-input" type="text" readonly></label>
-                            </div>
+<!--                            <div class="modal-row">-->
+<!--                                <label class="modal-label">Bridge<input name="observatory" class="modal-input" type="text" readonly></label>-->
+<!--                            </div>-->
 
                             <div class="manage-list"></div>
 
@@ -175,7 +178,6 @@
                                     <select name="buffer_hours" class="modal-input"></select>
                                 </label>
                             </div>
-                            <div class="manage-hint">Tip: open the Measurements plot and click it to pick a threshold.</div>
 
                             <div class="manage-message hidden"></div>
 
@@ -193,6 +195,7 @@
                 </div>
             </div>
         </div>
+        <div id="toast-container"></div>
         <script type="module" src="/src/main.js"></script>
     </body>
 </html>

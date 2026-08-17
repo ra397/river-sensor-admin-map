@@ -1,5 +1,5 @@
 import {isAuthenticated} from "./auth.js";
-import {showForm} from "./authUI.js";
+import {promptLogin} from "./authUI.js";
 
 export function getFormData(container) {
     const data = {};
@@ -51,11 +51,9 @@ export function enterConfirm(container, initialData) {
 
 export async function requireAuth(authRequired) {
     if (authRequired && !isAuthenticated()) {
-        showForm(document.getElementById('login-container'));
-        await new Promise(resolve => {
-            window.addEventListener('auth:login', resolve, {once: true});
-        });
+        return promptLogin();
     }
+    return true;
 }
 
 export function setFormValues(container, values) {

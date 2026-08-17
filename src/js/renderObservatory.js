@@ -1,5 +1,5 @@
 import {isAuthenticated} from "./auth.js";
-import {showForm} from "./authUI.js";
+import {promptLogin} from "./authUI.js";
 import {renderManageTickets} from "./renderManageTickets.js";
 import {renderNotifications} from "./renderNotifications.js";
 
@@ -7,8 +7,7 @@ const FIELD_LABELS = [
     { key: 'name', label: 'Name' },
     { key: 'sid', label: 'SID' },
     { key: 'status', label: 'Status' },
-    { key: 'latitude', label: 'Latitude' },
-    { key: 'longitude', label: 'Longitude' },
+    { key: 'gps', label: 'GPS' },
     { key: 'elevation', label: 'Elevation' },
     { key: 'town', label: 'Town' },
     { key: 'road', label: 'Road' },
@@ -19,21 +18,18 @@ const FIELD_LABELS = [
     { key: 'voltage', label: 'Voltage' },
     { key: 'orientation', label: 'Orientation' },
     { key: 'updown', label: 'Up/Down' },
-    { key: 'latest_observation', label: 'Latest Observation' },
+    { key: 'latest_observation', label: 'Last Packet' },
     { key: 'no_packet_days', label: 'Days Offline' },
     { key: 'cooperator', label: 'Cooperator' },
     // { key: 'public_note', label: 'Public Note' },
 ];
 
 export async function renderObservatoryInfoWindow(container, observatory, authRequired = false) {
-    if (authRequired) {
-        if (!isAuthenticated()) {
-            // Launch authentication
-            showForm(document.getElementById('login-container'));
-            await new Promise(resolve => {
-                window.addEventListener('auth:login', resolve, {once: true});
-            });
-        }
+    console.log("Rendering observatory info window: ", observatory);
+
+    if (authRequired && !isAuthenticated()) {
+        // Launch authentication, and give up if the user dismisses it
+        if (!await promptLogin()) return;
     }
 
     container.querySelectorAll('.observatory-row-container').forEach(el => el.remove());
@@ -41,7 +37,11 @@ export async function renderObservatoryInfoWindow(container, observatory, authRe
 
 
     FIELD_LABELS.forEach(field => {
-        const value = observatory[field.key];
+        const value = field.key === 'gps'
+            ? (observatory.latitude != null && observatory.longitude != null
+                ? `${observatory.latitude}, ${observatory.longitude}`
+                : null)
+            : observatory[field.key];
 
         if (value != null) {
             const rowContainerEl = document.createElement('div');

@@ -12,6 +12,7 @@ import {
     setFormValues,
     setupFormListeners
 } from "./ticketForm.js";
+import { showToast } from "./toast.js";
 
 const MIN_BUFFER_HOURS = 3;
 const MAX_BUFFER_HOURS = 24;
@@ -46,6 +47,8 @@ export async function renderNotifications(container, observatory, authRequired =
     populateBufferOptions(container);
     exitConfirm(container);
     container.classList.remove('hidden');
+
+    showToast('Tip: open the Measurements plot and click it to pick a threshold.');
 
     const listEl = container.querySelector('.manage-list');
     const messageEl = container.querySelector('.manage-message');
@@ -422,7 +425,7 @@ function populateBufferOptions(container) {
     const bufferSelect = container.querySelector('select[name="buffer_hours"]');
     if (bufferSelect.options.length > 0) return;
 
-    for (let hours = MIN_BUFFER_HOURS; hours <= MAX_BUFFER_HOURS; hours++) {
+    for (let hours = MIN_BUFFER_HOURS; hours <= MAX_BUFFER_HOURS; hours = hours + 3) {
         const option = document.createElement('option');
         option.value = String(hours);
         option.textContent = `${hours} hours`;
