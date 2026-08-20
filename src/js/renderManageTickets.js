@@ -29,7 +29,7 @@ const TICKET_COLUMNS = [
 let activeCleanup = null;
 
 export async function renderManageTickets(container, observatory, authRequired = true) {
-    await requireAuth(authRequired);
+    if (!await requireAuth(authRequired)) return;
 
     // Re-opening the panel rebinds the form, drop the previous bindings first
     activeCleanup?.();

@@ -52,6 +52,8 @@ export function promptLogin() {
         window.addEventListener('auth:cancel', onCancel);
     });
 
+    console.log(pendingLogin);
+
     return pendingLogin;
 }
 
