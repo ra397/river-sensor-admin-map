@@ -1,6 +1,7 @@
 import { map } from './js/map.js';
 import { Markers } from "./js/marker.js";
-import { getObservatoryData } from "./js/api.js";
+import { getObservatoryData, isJwtAuthEnabled } from "./js/api.js";
+import { setJwtAuthEnabled } from "./js/auth.js";
 import { initSearch } from "./js/search.js";
 import { initFilters } from "./js/filter.js";
 import { colorByConfig, getColor } from "./js/colorByUI.js";
@@ -12,6 +13,10 @@ import { makeDraggable } from "./js/draggableContainer.js";
 import { renderManageTickets } from "./js/renderManageTickets.js";
 import { renderNotifications } from "./js/renderNotifications.js";
 import { initMapStyleControl } from "./js/mapStyles.js";
+
+// The auth mode decides whether requests carry a token and whether the app
+// forces a login, so settle it before anything talks to the backend
+setJwtAuthEnabled(await isJwtAuthEnabled());
 
 const renderObservatoryContainerEl = document.querySelector("#renderObservatoryContainer");
 

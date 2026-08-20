@@ -2,6 +2,21 @@ import { baseUrl, apiConfig } from "./importApiConfig.js";
 
 const TOKEN_KEY = 'access_token';
 
+// Sent in place of a JWT when the backend runs with JWT auth turned off
+export const DEMO_USER_EMAIL = 'nddot@demo.net';
+
+// Settled once at startup from the backend. Defaults to true so a failed check
+// leaves the login flow in place rather than silently unlocking the app.
+let jwtAuthEnabled = true;
+
+export function setJwtAuthEnabled(enabled) {
+    jwtAuthEnabled = enabled;
+}
+
+export function isJwtAuthRequired() {
+    return jwtAuthEnabled;
+}
+
 export function getToken() {
     return sessionStorage.getItem(TOKEN_KEY);
 }
@@ -15,6 +30,9 @@ export function clearToken() {
 }
 
 export function isAuthenticated() {
+    // Without JWT auth there is no login to require, so every caller counts as
+    // authenticated and the auth-gated features stay open
+    if (!jwtAuthEnabled) return true;
     return !!getToken();
 }
 

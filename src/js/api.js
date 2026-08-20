@@ -1,4 +1,4 @@
-import { getToken, setToken, clearToken } from './auth.js';
+import { getToken, setToken, clearToken, isJwtAuthRequired, DEMO_USER_EMAIL } from './auth.js';
 import { promptLogin } from './authUI.js';
 import { baseUrl, apiConfig } from "./importApiConfig.js";
 
@@ -31,10 +31,15 @@ export async function request(name, { pathParams = {}, queryParams = {}, body = 
     // Built per attempt so a replay picks up the token from the fresh login
     const send = () => {
         const headers = {};
-        const token = getToken();
 
-        if (token) {
-            headers['Authorization'] = `Bearer ${token}`;
+        if (isJwtAuthRequired()) {
+            const token = getToken();
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+        } else {
+            // No JWT to send, the backend identifies the caller by this header
+            headers['user-email'] = DEMO_USER_EMAIL;
         }
 
         if (body) {
@@ -51,8 +56,9 @@ export async function request(name, { pathParams = {}, queryParams = {}, body = 
     let response = await send();
     storeRefreshedToken(response);
 
-    // Handle unauthorized - ask for a login in place, then replay the request
-    if (response.status === 401) {
+    // Handle unauthorized - ask for a login in place, then replay the request.
+    // With JWT auth off there is nothing to log in with, so let it fall through.
+    if (response.status === 401 && isJwtAuthRequired()) {
         clearToken();
         const loggedIn = await promptLogin();
         if (!loggedIn) {
@@ -190,4 +196,23 @@ export async function deleteNotification(id) {
 export async function getMaintenanceCrew() {
     const crew = await request('maintenance_crew');
     return crew.map(item => item.fullname);
+}
+
+// Answers whether the backend enforces JWT auth. Deliberately bypasses request()
+// so the bootstrap check carries no token and never triggers the login prompt.
+export async function isJwtAuthEnabled() {
+    const config = apiConfig['requests']['jwt_auth_enabled'];
+
+    try {
+        const response = await fetch(`${baseUrl}${config.endpoint}`, { method: config.method });
+        if (!response.ok) {
+            throw new Error(`Request failed: ${response.status}`);
+        }
+        const res = await response.json();
+        return !!res.jwt_auth_enabled;
+    } catch (err) {
+        // Fail secure: keep the login flow when the status cannot be read
+        console.error('Could not read the auth status, assuming JWT auth is enabled.', err);
+        return true;
+    }
 }

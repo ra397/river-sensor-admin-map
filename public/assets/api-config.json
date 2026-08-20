@@ -79,6 +79,10 @@
     "delete_notification": {
       "method": "DELETE",
       "endpoint": "/notifications/:id"
+    },
+    "jwt_auth_enabled": {
+      "method": "GET",
+      "endpoint": "/auth/status"
     }
   }
 }
