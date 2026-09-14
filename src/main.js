@@ -31,15 +31,15 @@ function getObservatory(oid) {
 
 async function handleMarkerClick(marker) {
     markers.select(marker);
-    const observatory = getObservatory(marker.getId());
+    const observatory = getObservatory(marker.id);
     if (observatory) {
         await renderObservatoryInfoWindow(renderObservatoryContainerEl, observatory);
     }
     if (showPlots) {
-        await updateReports(marker.getId());
+        await updateReports(marker.id);
     }
     if (showPanorama) {
-        await showStreetView(marker.getPosition());
+        await showStreetView({ lat: marker.lat, lng: marker.lng });
     }
 
     // The manage panels are scoped to one bridge, follow the selected marker
@@ -62,19 +62,28 @@ async function handleMarkerClick(marker) {
     }
 }
 
+const IFC_SENSOR_SVG =
+    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">' +
+    '<circle cx="8" cy="8" r="5" fill="#1565c0" stroke="#ffffff" stroke-width="2"/></svg>';
+
+const SELECTED_SVG =
+    '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">' +
+    '<circle cx="14" cy="14" r="11" fill="#ef6c00" fill-opacity="0.25"/>' +
+    '<circle cx="14" cy="14" r="7" fill="#ef6c00" stroke="#ffffff" stroke-width="3"/></svg>';
+
 function initMarkers() {
-    markers = new Markers({
-        map: map,
+    markers = new Markers(map, {
+        style: IFC_SENSOR_SVG,
+        selectedStyle: SELECTED_SVG,
         onClick: handleMarkerClick,
     });
     observatories.forEach((observatory) => {
         markers.add({
             id: observatory.oid,
-            position: { lat: observatory.latitude, lng: observatory.longitude },
-            color: 'green',
+            lat: observatory.latitude,
+            lng: observatory.longitude,
         });
     });
-    map.setCenter(markers.getBoundingBox().getCenter());
 }
 
 async function loadObservatories() {
@@ -103,17 +112,20 @@ window.addEventListener('colorby:change', (e) => {
     // if null, go to default coloring, hide the legend
 
     if (colorBy === null) {
-        markers.forEach((marker) => {
-            marker.setColor('green');
-        })
+        console.log('resetting coloring');
+        markers.setStyle(IFC_SENSOR_SVG);
         bar.hide();
         return;
     }
 
     observatories.forEach((observatory) => {
         const markerColor = getColor(observatory[colorBy], colorByConfig[colorBy]);
+        const svg =
+            '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">' +
+            `<circle cx="8" cy="8" r="5" fill="${markerColor}" stroke="#ffffff" stroke-width="2"/></svg>`;
+        console.log(markerColor);
         const marker = markers.get(observatory['oid']);
-        if (marker) marker.setColor(markerColor);
+        if (marker) markers.setMarkerStyle(marker, svg);
     });
 
     bar.update(
@@ -130,7 +142,7 @@ plotCheckbox.addEventListener('change', async (e) => {
     showPlots = e.target.checked;
     if (showPlots) {
         const selectedMarker = markers.getSelected();
-        if (selectedMarker) await updateReports(selectedMarker.getId());
+        if (selectedMarker) await updateReports(selectedMarker.id);
     } else {
         plotContainer.classList.add('hidden');
     }

@@ -1,199 +1,178 @@
-const PULSE_PERIOD = 1300; // ms per ripple
-const PULSE_FPS    = 30;   // throttle: re-encoding the SVG is not free
-
-class Marker {
-    #id = null;
-    #map = null;
-    #marker = null;
-    #color = null;
-    #selected = false;
-    #onClick = null;
-
-    #rafId = null;
-    #pulseStart = 0;
-    #lastDraw = 0;
-
-    constructor(options = {}) {
-        const { id, position, map, color, onClick } = options;
-
-        this.#id = id;
-        this.#map = map;
-        this.#color = color;
-
-        this.#marker = new google.maps.Marker({
-            position,
-            map,
-            icon: this.#buildIcon(color, false),
-            zIndex: 9999,
-        });
-
-        this.#onClick = this.#marker.addListener('click', (e) => {
-            onClick?.(this, e);
-        });
-    }
-
-    // t = ripple progress 0..1, only used when selected
-    #buildIcon(color, selected, t = 0) {
-        const size   = 8;
-        const dotR   = size / 2;
-        // canvas grows when selected so the expanding ring isn't clipped
-        const canvas = selected ? size * 4 : size * 2;
-        const c      = canvas / 2;
-
-        const strokeColor = selected ? '#444' : '#000';
-        const strokeWidth = selected ? 2 : 1;
-
-        let ripple = '';
-        if (selected) {
-            const maxR    = canvas / 2 - 2;
-            const eased   = 1 - Math.pow(1 - t, 2);      // fast out, slow finish
-            const r       = dotR + (maxR - dotR) * eased;
-            const opacity = (1 - t) * 0.6;
-            ripple = `<circle cx="${c}" cy="${c}" r="${r.toFixed(2)}" fill="none"
-                              stroke="#444" stroke-width="2" opacity="${opacity.toFixed(3)}"/>`;
-        }
-
-        const svg = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="${canvas}" height="${canvas}" viewBox="0 0 ${canvas} ${canvas}">
-                ${ripple}
-                <circle cx="${c}" cy="${c}" r="${dotR}" fill="${color}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-            </svg>
-        `;
-
-        return {
-            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
-            anchor: new google.maps.Point(c, c),
-            scaledSize: new google.maps.Size(canvas, canvas),
-        };
-    }
-
-    #updateIcon(t = 0) {
-        this.#marker?.setIcon(this.#buildIcon(this.#color, this.#selected, t));
-    }
-
-    #startPulse() {
-        if (this.#rafId !== null) return;
-        this.#pulseStart = performance.now();
-        this.#lastDraw = 0;
-
-        const step = (now) => {
-            if (!this.#marker || !this.#selected) return;
-
-            if (now - this.#lastDraw >= 1000 / PULSE_FPS) {
-                this.#lastDraw = now;
-                const t = ((now - this.#pulseStart) % PULSE_PERIOD) / PULSE_PERIOD;
-                this.#updateIcon(t);
-            }
-            this.#rafId = requestAnimationFrame(step);
-        };
-
-        this.#rafId = requestAnimationFrame(step);
-    }
-
-    #stopPulse() {
-        if (this.#rafId === null) return;
-        cancelAnimationFrame(this.#rafId);
-        this.#rafId = null;
-    }
-
-    getId() { return this.#id; }
-
-    setPosition(position) { this.#marker.setPosition(position); }
-
-    getPosition() { return this.#marker.getPosition(); }
-
-    setZIndex(z) { this.#marker.setZIndex(z); }
-
-    setSelected(selected) {
-        if (this.#selected === selected) return;
-        this.#selected = selected;
-
-        if (selected) {
-            this.#startPulse();
-        } else {
-            this.#stopPulse();
-            this.#updateIcon();
-        }
-    }
-
-    setColor(color) {
-        this.#color = color;
-        if (!this.#selected) this.#updateIcon();
-    }
-
-    setVisible(visible) {
-        this.#marker.setMap(visible ? this.#map : null);
-        if (!visible) this.#stopPulse();
-        else if (this.#selected) this.#startPulse();
-    }
-
-    destroy() {
-        this.#stopPulse();
-        google.maps.event.removeListener(this.#onClick);
-        this.#onClick = null;
-        this.#marker.setMap(null);
-        this.#marker = null;
-    }
-}
-
 export class Markers {
-    #markers = [];
-    #map = null;
-    #onClick = null;
-    #active = null;
+    #data;
+    #markers = new Map();     // id -> { id, lat, lng }
+    #features = new Map();    // id -> google.maps.Data.Feature
+    #handlers = new Map();    // id -> click handler
+    #hidden = new Set();      // hidden ids
+    #selectedId = null;
+    #icon;
+    #selectedIcon;
+    #onClick;
 
-    constructor(options = {}) {
-        const { map, onClick } = options;
-        this.#map = map;
-        this.#onClick = onClick;
+    constructor(map, options = {}) {
+        if (!options.style || !options.selectedStyle) {
+            throw new Error("Markers requires a style and a selectedStyle SVG string");
+        }
+
+        this.#onClick = options.onClick || null;
+        this.#icon = this.#toIcon(options.style);
+        this.#selectedIcon = this.#toIcon(options.selectedStyle);
+
+        this.#data = new google.maps.Data({ map });
+
+        // One listener for the whole collection.
+        this.#data.addListener("click", event => {
+            const marker = this.#markers.get(event.feature.getProperty("id"));
+            if (!marker) return;
+
+            const handler = this.#handlers.get(marker.id) || this.#onClick;
+            if (handler) handler(marker);
+        });
+
+        this.#restyle();
     }
 
-    add(options = {}) {
-        const marker = new Marker({
-            ...options,
-            map: this.#map,
-            onClick: this.#onClick,
+    add(markerOrMarkers, onClick) {
+        const list = Array.isArray(markerOrMarkers) ? markerOrMarkers : [markerOrMarkers];
+
+        const incoming = new Set();
+        for (const { id } of list) {
+            if (this.#markers.has(id) || incoming.has(id)) {
+                throw new Error(`Marker with id "${id}" already exists`);
+            }
+            incoming.add(id);
+        }
+
+        // One bulk insertion, regardless of how many markers.
+        const features = this.#data.addGeoJson({
+            type: "FeatureCollection",
+            features: list.map(({ id, lat, lng }) => ({
+                type: "Feature",
+                geometry: { type: "Point", coordinates: [lng, lat] },
+                properties: { id }
+            }))
         });
-        this.#markers.push(marker);
-        return marker;
+
+        for (const { id, lat, lng } of list) {
+            this.#markers.set(id, { id, lat, lng });
+            if (onClick) this.#handlers.set(id, onClick);
+        }
+
+        for (const feature of features) {
+            this.#features.set(feature.getProperty("id"), feature);
+        }
     }
 
     get(id) {
-        return this.#markers.find(m => m.getId() === id);
+        return this.#markers.get(id) || null;
     }
 
-    select(marker) {
-        if (this.#active === marker) return;
-        this.#active?.setSelected(false);
-        this.#active = marker;
-        marker?.setSelected(true);
+    select(markerOrId) {
+        const id = this.#toId(markerOrId);
+        if (id !== null && !this.#markers.has(id)) return;
 
-        marker?.setVisible(true);
+        this.#selectedId = id ?? null;
+        this.#restyle();
     }
 
     getSelected() {
-        return this.#active;
+        return this.#selectedId === null ? null : this.#markers.get(this.#selectedId);
     }
 
-    remove(marker) {
-        const idx = this.#markers.indexOf(marker);
-        if (idx === -1) return;
-        marker.destroy();
-        this.#markers.splice(idx, 1);
+    remove(markerOrId) {
+        const id = this.#toId(markerOrId);
+        const feature = this.#features.get(id);
+        if (!feature) return;
+
+        this.#data.remove(feature);
+        this.#features.delete(id);
+        this.#markers.delete(id);
+        this.#handlers.delete(id);
+        this.#hidden.delete(id);
+        if (this.#selectedId === id) this.#selectedId = null;
+
+        this.#restyle();
     }
 
-    forEach(callback) {
-        this.#markers.forEach(callback);
+    setMarkerStyle(markerOrId, svg) {
+        const id = this.#toId(markerOrId);
+        const marker = this.#markers.get(id);
+
+        if (!marker) return;
+
+        marker.icon = this.#toIcon(svg);
+        this.#restyle();
     }
 
-    removeAll() {
-        for (const m of this.#markers) m.destroy();
-        this.#markers = [];
+    show(markerOrId) {
+        this.#hidden.delete(this.#toId(markerOrId));
+        this.#restyle();
     }
 
-    getBoundingBox() {
-        const bounds = new google.maps.LatLngBounds();
-        this.#markers.forEach(m => bounds.extend(m.getPosition()));
-        return bounds;
+    hide(markerOrId) {
+        const id = this.#toId(markerOrId);
+        if (this.#markers.has(id)) this.#hidden.add(id);
+        this.#restyle();
+    }
+
+    showAll() {
+        this.#hidden.clear();
+        this.#restyle();
+    }
+
+    hideAll() {
+        for (const id of this.#markers.keys()) this.#hidden.add(id);
+        this.#restyle();
+    }
+
+    setStyle(svg) {
+        this.#icon = this.#toIcon(svg);
+
+        for (const marker of this.#markers.values()) {
+            marker.icon = null;
+        }
+
+        this.#restyle();
+    }
+
+    setSelectedStyle(svg) {
+        this.#selectedIcon = this.#toIcon(svg);
+        this.#restyle();
+    }
+
+    // Re-applying the style function makes the Data Layer re-evaluate every
+    // feature against the current state (hidden / selected / icons).
+    #restyle() {
+        this.#data.setStyle(feature => {
+            const id = feature.getProperty("id");
+
+            if (this.#hidden.has(id)) {
+                return { visible: false };
+            }
+
+            if (id === this.#selectedId) {
+                return { icon: this.#selectedIcon };
+            }
+
+            const marker = this.#markers.get(id);
+
+            return {
+                icon: marker?.icon ?? this.#icon
+            };
+        });
+    }
+
+    #toIcon(svg) {
+        const url = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+        const width = parseFloat(/width="([\d.]+)"/.exec(svg)?.[1]);
+        const height = parseFloat(/height="([\d.]+)"/.exec(svg)?.[1]);
+
+        return width && height
+            ? { url, anchor: new google.maps.Point(width / 2, height / 2) }
+            : { url };
+    }
+
+    #toId(markerOrId) {
+        return markerOrId && typeof markerOrId === "object" ? markerOrId.id : markerOrId;
     }
 }

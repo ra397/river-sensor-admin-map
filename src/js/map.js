@@ -5,6 +5,7 @@ const mapEl = document.getElementById('map');
 const mapMenus = Array.from(mapEl.children); // take snapshot before Google Maps API wipes #map container
 
 export const map = new google.maps.Map(mapEl, {
+    center: { lat: 47.2055, lng: -99.6527 },
     zoom: 7,
     minZoom: 5,
     maxZoom: 18,

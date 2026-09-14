@@ -116,7 +116,12 @@ function applyFilters() {
     for (const obs of observatoryData) {
         const marker = markers.get(obs.oid);
         if (!marker) continue;
-        marker.setVisible(passes(obs));
+        const visible = passes(obs);
+        if (visible) {
+            markers.show(marker);
+        } else {
+            markers.hide(marker);
+        }
     }
 }
 
