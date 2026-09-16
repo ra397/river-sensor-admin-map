@@ -1,0 +1,42 @@
+#usgs-plot-container {
+    position: absolute;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    width: min(518px, calc(100vw - 48px));
+    height: 320px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    z-index: 5;
+}
+
+#usgs-plot-container .plotly-body {
+    position: absolute;
+    inset: 8px;
+}
+
+#usgs-plot-container .plot {
+    width: 100%;
+    height: 100%;
+}
+
+.usgs-close-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+    user-select: none;
+    background-color: #e6e6e67d;
+    aspect-ratio: 1 / 1;
+    height: 1.6em;
+    line-height: 1.6em;
+    text-align: center;
+    font-size: 0.8em;
+    z-index: 2;
+}
+
+.usgs-close-button:hover {
+    background-color: #DE5246;
+    color: white;
+}

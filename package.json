@@ -13,6 +13,8 @@
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^2.0.2",
+    "geobuf": "^4.0.0",
+    "pbf": "^5.1.2",
     "plotly.js-dist-min": "^3.5.1"
   }
 }

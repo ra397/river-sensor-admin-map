@@ -140,6 +140,13 @@ export class Markers {
         this.#restyle();
     }
 
+    reset() {
+        if (this.#selectedId === null) return;
+
+        this.#selectedId = null;
+        this.#restyle();
+    }
+
     // Re-applying the style function makes the Data Layer re-evaluate every
     // feature against the current state (hidden / selected / icons).
     #restyle() {

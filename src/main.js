@@ -13,6 +13,9 @@ import { makeDraggable } from "./js/draggableContainer.js";
 import { renderManageTickets } from "./js/renderManageTickets.js";
 import { renderNotifications } from "./js/renderNotifications.js";
 import { initMapStyleControl } from "./js/mapStyles.js";
+import {initUsgsGauges} from "./js/usgs/usgsGauges.js";
+import { registerMarkerGroup, activateMarkerGroup } from "./js/markerGroups.js";
+import { showBasin } from "./js/basins.js";
 
 // The auth mode decides whether requests carry a token and whether the app
 // forces a login, so settle it before anything talks to the backend
@@ -21,16 +24,26 @@ setJwtAuthEnabled(await isJwtAuthEnabled());
 const renderObservatoryContainerEl = document.querySelector("#renderObservatoryContainer");
 
 let observatories = [];
-let markers = null;
+let ifcMarkers = null;
 let showPlots = false;
 let showPanorama = false;
+
+const ifcGroup = registerMarkerGroup(null, [
+    document.querySelector('#renderObservatoryContainer'),
+    document.querySelector('#plot-container'),
+    document.querySelector('#pano-container'),
+    document.querySelector('#manageTickets'),
+    document.querySelector('#manageNotifications'),
+]);
 
 function getObservatory(oid) {
     return observatories.find(o => o.oid === oid) || null;
 }
 
 async function handleMarkerClick(marker) {
-    markers.select(marker);
+    activateMarkerGroup(ifcMarkers);
+    ifcMarkers.select(marker);
+    showBasin('ifc', marker.id);
     const observatory = getObservatory(marker.id);
     if (observatory) {
         await renderObservatoryInfoWindow(renderObservatoryContainerEl, observatory);
@@ -71,29 +84,30 @@ const SELECTED_SVG =
     '<circle cx="14" cy="14" r="11" fill="#ef6c00" fill-opacity="0.25"/>' +
     '<circle cx="14" cy="14" r="7" fill="#ef6c00" stroke="#ffffff" stroke-width="3"/></svg>';
 
-function initMarkers() {
-    markers = new Markers(map, {
+function initIfcMarkers() {
+    ifcMarkers = new Markers(map, {
         style: IFC_SENSOR_SVG,
         selectedStyle: SELECTED_SVG,
         onClick: handleMarkerClick,
     });
     observatories.forEach((observatory) => {
-        markers.add({
+        ifcMarkers.add({
             id: observatory.oid,
             lat: observatory.latitude,
             lng: observatory.longitude,
         });
     });
+    ifcGroup.markers = ifcMarkers;
 }
 
 async function loadObservatories() {
-    const previouslySelectedMarkerId =  markers?.getSelected()?.getId() ?? null;
+    const previouslySelectedMarkerId =  ifcMarkers?.getSelected()?.getId() ?? null;
     observatories = await getObservatoryData();
-    initMarkers();
+    initIfcMarkers();
     if (previouslySelectedMarkerId) {
-        const marker = markers.get(previouslySelectedMarkerId);
+        const marker = ifcMarkers.get(previouslySelectedMarkerId);
         if (marker) {
-            markers.select(marker);
+            ifcMarkers.select(marker);
             const observatory = getObservatory(previouslySelectedMarkerId);
             if (observatory) {
                 await renderObservatoryInfoWindow(renderObservatoryContainerEl, observatory);
@@ -113,7 +127,7 @@ window.addEventListener('colorby:change', (e) => {
 
     if (colorBy === null) {
         console.log('resetting coloring');
-        markers.setStyle(IFC_SENSOR_SVG);
+        ifcMarkers.setStyle(IFC_SENSOR_SVG);
         bar.hide();
         return;
     }
@@ -124,8 +138,8 @@ window.addEventListener('colorby:change', (e) => {
             '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">' +
             `<circle cx="8" cy="8" r="5" fill="${markerColor}" stroke="#ffffff" stroke-width="2"/></svg>`;
         console.log(markerColor);
-        const marker = markers.get(observatory['oid']);
-        if (marker) markers.setMarkerStyle(marker, svg);
+        const marker = ifcMarkers.get(observatory['oid']);
+        if (marker) ifcMarkers.setMarkerStyle(marker, svg);
     });
 
     bar.update(
@@ -141,7 +155,7 @@ const plotCheckbox = document.querySelector('input[name="plots"]');
 plotCheckbox.addEventListener('change', async (e) => {
     showPlots = e.target.checked;
     if (showPlots) {
-        const selectedMarker = markers.getSelected();
+        const selectedMarker = ifcMarkers.getSelected();
         if (selectedMarker) await updateReports(selectedMarker.id);
     } else {
         plotContainer.classList.add('hidden');
@@ -157,8 +171,8 @@ const panoCheckbox = document.querySelector('input[name="panorama"]');
 panoCheckbox.addEventListener('change', async (e) => {
    showPanorama = e.target.checked;
    if (showPanorama) {
-       const selectedMarker = markers.getSelected();
-       if (selectedMarker) await showStreetView(selectedMarker.getPosition());
+       const selectedMarker = ifcMarkers.getSelected();
+       if (selectedMarker)         await showStreetView({ lat: selectedMarker.lat, lng: selectedMarker.lng });
    } else {
        panoContainer.classList.add('hidden');
    }
@@ -169,8 +183,8 @@ panoContainer.querySelector('.close-button').addEventListener('click', () => {
     panoCheckbox.checked = false;
 });
 
-initSearch(markers, map, observatories);
-initFilters(markers, observatories);
+initSearch(ifcMarkers, map, observatories);
+initFilters(ifcMarkers, observatories);
 makeDraggable(document.querySelectorAll('.draggable'));
 initMapStyleControl(map);
 
@@ -187,3 +201,5 @@ sidebarToggle.addEventListener('click', () => {
     sidebarToggle.classList.remove('hint');
     localStorage.setItem('sidebarUsed', 'true');
 });
+
+const usgsMarkers = await initUsgsGauges(map);

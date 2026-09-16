@@ -12,6 +12,10 @@
 @import './css/draggableContainer.css';
 @import "./css/modal.css";
 @import "./css/toast.css";
+@import "./css/usgs/usgs.css";
+@import "./css/usgs/usgsApiKeyDialog.css";
+@import "./css/usgs/usgsPlot.css";
+@import "./css/usgs/loading-spinner.css";
 
 :root {
     --black: #000;
