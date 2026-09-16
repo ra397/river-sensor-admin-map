@@ -8,6 +8,10 @@ export function showGaugePlot(gauge, points, unit, maxY) {
 
     div.id = PLOT_ID;
 
+    // Plotly measures the div as it plots, so the panel is on screen before it does;
+    // measuring a hidden panel gives it no size and it falls back to its own 700x450.
+    show();
+
     const trace = {
         x: points.map(p => p.x),
         y: points.map(p => p.y),
@@ -18,8 +22,9 @@ export function showGaugePlot(gauge, points, unit, maxY) {
     };
 
     const layout = {
-        margin: { l: 45, r: 25, b: 25, t: 25, pad: 4 },
-        title: gauge.siteName,
+        // The taller top margin is what the two-line title needs.
+        margin: { l: 45, r: 25, b: 25, t: 50, pad: 4 },
+        title: buildTitle(gauge),
         xaxis: {
             title: 'Date',
             showline: true,
@@ -39,8 +44,20 @@ export function showGaugePlot(gauge, points, unit, maxY) {
         displayModeBar: false,
         responsive: true
     });
+}
 
-    show();
+// The name is what a reader recognizes, the site id is what they cite, so the plot carries both.
+function buildTitle(gauge) {
+    const siteName = gauge.siteName ?? '';
+    const id = gauge.id ?? '';
+
+    // The caller falls back to the id when USGS has no name, so never print it twice.
+    if (!id || id === siteName) return { text: siteName || id };
+
+    return {
+        text: `${siteName}<br><span style="font-size:12px;color:#555">${id}</span>`,
+        font: { size: 15 }
+    };
 }
 
 export function showGaugeLoading() {

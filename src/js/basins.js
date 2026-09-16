@@ -20,12 +20,11 @@ const SOURCES = {
 };
 
 const BASIN_STYLE = {
-    strokeColor: '#ef6c00',
+    strokeColor: 'rgb(13, 110, 253)',
     strokeWeight: 2,
     strokeOpacity: 0.9,
-    fillColor: '#ef6c00',
-    fillOpacity: 0.12,
-    // Clicks belong to the markers sitting on top of the basin, never to the basin.
+    fillColor: '#ccc',
+    fillOpacity: 0.3,
     clickable: false,
     zIndex: 1
 };
