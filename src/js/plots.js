@@ -8,7 +8,7 @@ const THRESHOLD_LINE_COLOR = '#7f8c8d';
 const THRESHOLD_HIGHLIGHT_COLOR = '#e67e22';
 
 let currentObservatoryId = null;
-let activePlot = 'packet-count'; // default
+let activePlot = 'measurements'; // default
 
 let thresholds = [];              // this user's notification thresholds for the site
 let highlightedThresholdId = null; // the registration open in the notifications panel
@@ -39,15 +39,16 @@ function getDateRange(yearsBack = 1, extraDaysEnd = 0) {
 }
 
 const PLOT_CONFIG = {
-    'packet-count': {
-        title: 'Packet Count',
-        yaxis: 'Count',
+    'measurements': {
+        title: 'Measured',
+        yaxis: 'Value (cm)',
         traces: [
-            { key: 'pkt_cnt', xKey: 'dt', name: 'Packet Count', mode: 'markers', type: 'scattergl', color: 'blue' }
+            { key: 'primary', xKey: 'validtime', name: 'Primary', mode: 'markers', type: 'scattergl', color: 'blue', flagKey: 'flag' }
         ],
+        showThresholds: true, // measurements share the notification threshold units (cm)
     },
     'battery': {
-        title: 'Battery',
+        title: 'Voltage',
         yaxis: 'Voltage (V)',
         traces: [
             { key: 'avg', xKey: 'dt', name: 'Average', mode: 'lines+markers', type: 'scattergl', color: 'blue' },
@@ -58,13 +59,14 @@ const PLOT_CONFIG = {
         yearsBack: 3,
         plotYearsBack: 1,
     },
-    'measurements': {
-        title: 'Measurements',
-        yaxis: 'Value (cm)',
+    'packet-count': {
+        title: 'Packets',
+        yaxis: 'Count',
         traces: [
-            { key: 'primary', xKey: 'validtime', name: 'Primary', mode: 'markers', type: 'scattergl', color: 'blue', flagKey: 'flag' }
+            { key: 'pkt_cnt', xKey: 'dt', name: 'Packet Count', mode: 'markers', type: 'scattergl', color: 'blue' }
         ],
-        showThresholds: true, // measurements share the notification threshold units (cm)
+        yTickFormat: 'd',
+        yHoverFormat: 'd',
     },
     'moisture': {
         title: 'Moisture',
@@ -222,8 +224,8 @@ function buildLayout(config, range) {
             title: config.yaxis,
             showline: true,
             linecolor: 'black',
-            tickformat: '.1f',
-            hoverformat: '.2f',
+            tickformat: config.yTickFormat ?? '.1f',
+            hoverformat: config.yHoverFormat ?? '.2f',
         },
         legend: {
             x: 0.01, y: 0.99,
