@@ -125,3 +125,11 @@ button:disabled {
     background-color: #DE5246;
     color: white;
 }
+
+.link {
+    color: var(--light-blue);
+}
+
+.link:hover {
+    text-decoration: #0D19FDFF;
+}

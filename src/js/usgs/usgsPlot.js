@@ -50,13 +50,16 @@ export function showGaugePlot(gauge, points, unit, maxY) {
 function buildTitle(gauge) {
     const siteName = gauge.siteName ?? '';
     const id = gauge.id ?? '';
+    const shortName = siteName.length > 30 ? `${siteName.slice(0, 30)}...` : siteName;
 
     // The caller falls back to the id when USGS has no name, so never print it twice.
     if (!id || id === siteName) return { text: siteName || id };
 
+    const url = `https://waterdata.usgs.gov/monitoring-location/${id}/#dataTypeId=continuous-00065-0&period=P30D&showFieldMeasurements=true`
+
     return {
-        text: `${siteName}<br><span style="font-size:12px;color:#555">${id}</span>`,
-        font: { size: 15 }
+        text: `${shortName} <a href='${url}' target='_blank'><span class="link">${id}</span></a>`,
+        font: { size: 14 }
     };
 }
 

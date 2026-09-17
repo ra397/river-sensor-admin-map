@@ -75,7 +75,6 @@ export async function initUsgsGauges(map) {
         }
 
         markers.add(gauges);
-        console.log(gauges);
         markers.hideAll();
     } catch (error) {
         // The rest of the application keeps working; the map simply has no gauges.
