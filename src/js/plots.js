@@ -64,7 +64,6 @@ const PLOT_CONFIG = {
         traces: [
             { key: 'primary', xKey: 'validtime', name: 'Primary', mode: 'markers', type: 'scattergl', color: 'blue', flagKey: 'flag' }
         ],
-        yTickFormat: 'd',
         showThresholds: true, // measurements share the notification threshold units (cm)
     },
     'moisture': {
@@ -208,7 +207,7 @@ function buildAnnotations(config) {
 
 function buildLayout(config, range) {
     return {
-        margin: { l: 45, r: 25, b: 25, t: 25, pad: 4 },
+        margin: { l: 55, r: 25, b: 25, t: 25, pad: 4 },
         shapes: buildShapes(config),
         annotations: buildAnnotations(config),
         title: config.title,
@@ -223,7 +222,8 @@ function buildLayout(config, range) {
             title: config.yaxis,
             showline: true,
             linecolor: 'black',
-            tickformat: config.yTickFormat,
+            tickformat: '.1f',
+            hoverformat: '.2f',
         },
         legend: {
             x: 0.01, y: 0.99,
