@@ -1,4 +1,5 @@
 import {login, requestOneTimeCode, submitNewPassword} from "./auth.js";
+import { showToast } from "./toast.js";
 
 const loginForm = document.getElementById('login-container');
 const forgotPasswordForm = document.getElementById('forgot-password-container');
@@ -68,7 +69,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
         hideLogin();
         window.dispatchEvent(new CustomEvent('auth:login'));
     } catch {
-        alert('Invalid email or password');
+        showToast('Invalid email or password');
     }
 });
 
@@ -87,7 +88,7 @@ document.getElementById('get-otp-btn').addEventListener('click', async () => {
         await requestOneTimeCode(email);
         showForm(newPasswordForm);
     } catch {
-        alert('Failed to send one-time code. Please try again.');
+        showToast('Failed to send one-time code. Please try again.');
     }
 });
 
@@ -98,16 +99,16 @@ document.getElementById('reset-password-btn').addEventListener('click', async ()
     const passwordConfirm = document.getElementById('reset-password-confirm').value;
 
     if (password !== passwordConfirm) {
-        alert('Passwords do not match.');
+        showToast('Passwords do not match.');
         return;
     }
 
     try {
         await submitNewPassword(email, oneTimeCode, password);
         showForm(loginForm);
-        alert("Successfully reset password");
+        showToast("Successfully reset password");
     } catch {
-        alert('Failed to reset password. Please try again.');
+        showToast('Failed to reset password. Please try again.');
     }
 });
 
