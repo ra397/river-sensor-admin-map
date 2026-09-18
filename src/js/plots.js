@@ -159,6 +159,9 @@ function buildTraces(config, data) {
 
 function buildShapes(config) {
     const now = new Date();
+    now.setDate(now.getDate() + 1);
+    now.setHours(0, 0, 0, 0);
+
     const shapes = [{
         type: 'line',
         x0: now, x1: now,
@@ -209,7 +212,7 @@ function buildAnnotations(config) {
 
 function buildLayout(config, range) {
     return {
-        margin: { l: 55, r: 25, b: 25, t: 25, pad: 4 },
+        margin: { l: 55, r: 25, b: 55, t: 25, pad: 4 },
         shapes: buildShapes(config),
         annotations: buildAnnotations(config),
         title: config.title,

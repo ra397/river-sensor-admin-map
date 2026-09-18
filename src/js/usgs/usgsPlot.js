@@ -23,8 +23,7 @@ export function showGaugePlot(gauge, points, unit, maxY) {
 
     const layout = {
         // The taller top margin is what the two-line title needs.
-        margin: { l: 45, r: 25, b: 25, t: 50, pad: 4 },
-        title: buildTitle(gauge),
+        margin: { l: 45, r: 25, b: 25, t: 25, pad: 4 },
         xaxis: {
             title: 'Date',
             showline: true,
@@ -44,6 +43,9 @@ export function showGaugePlot(gauge, points, unit, maxY) {
         displayModeBar: false,
         responsive: true
     });
+
+    const title = buildTitle(gauge);
+    document.getElementById('usgs-plot-title').innerHTML = title.text;
 }
 
 // The name is what a reader recognizes, the site id is what they cite, so the plot carries both.
@@ -58,8 +60,7 @@ function buildTitle(gauge) {
     const url = `https://waterdata.usgs.gov/monitoring-location/${id}/#dataTypeId=continuous-00065-0&period=P30D&showFieldMeasurements=true`
 
     return {
-        text: `${shortName} <a href='${url}' target='_blank'><span class="link">${id}</span></a>`,
-        font: { size: 14 }
+        text: `<span>${shortName}</span> <a href='${url}' target='_blank'>${id}</a>`,
     };
 }
 
